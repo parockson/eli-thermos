@@ -1,0 +1,72 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+
+  /* A tiny fade-in */
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-window {
+  background: #ffffff;
+  padding: 1.6rem 2rem;
+  border-radius: 12px;
+  width: 340px;
+  max-width: 90%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  position: relative;
+  animation: slideIn 0.25s ease-out;
+
+  h2 {
+    margin-top: 0;
+    margin-bottom: 0.8rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
+
+  p {
+    margin-bottom: 1.2rem;
+    line-height: 1.4;
+    font-size: 0.95rem;
+  }
+
+  button {
+    background: #333;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+
+  button:hover {
+    opacity: 0.85;
+  }
+}
+
+/* Soft fade for backdrop */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Slight upward motion on appearing */
+@keyframes slideIn {
+  from {
+    transform: translateY(14px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

@@ -1,0 +1,15 @@
+.readings {
+  @apply bg-white p-4 rounded shadow;
+}
+
+.readings h2 {
+  @apply font-semibold mb-2;
+}
+
+.resistance-low {
+  @apply text-blue-600 text-xl font-bold;
+}
+
+.resistance-high {
+  @apply text-red-600 text-xl font-bold;
+}

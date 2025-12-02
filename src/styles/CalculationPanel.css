@@ -1,0 +1,7 @@
+.calc-panel {
+  @apply bg-white shadow p-4 rounded;
+}
+
+.calc-panel h2 {
+  @apply font-semibold mb-2;
+}

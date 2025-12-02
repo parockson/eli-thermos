@@ -1,0 +1,126 @@
+// Variables
+$primary-color: #1e40af;
+$bg-light: #f0f0f0;
+$grid-temp: #fee2e2;
+$grid-resist: #dbeafe;
+
+// Global styles
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: $bg-light;
+}
+
+// Taskbar
+.taskbar {
+  width: 100%;
+  background-color: $primary-color;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+
+  button {
+    background-color: white;
+    color: $primary-color;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+}
+
+// Layout
+.container {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  min-height: 80vh;
+
+  .left, .right {
+    width: 25%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+// Cards
+.card {
+  background-color: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+// Grid
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-auto-rows: 60px;
+  gap: 8px;
+  width: 100%;
+
+  &.temperature {
+    background-color: $grid-temp;
+  }
+
+  &.resistance {
+    background-color: $grid-resist;
+  }
+
+  .grid-cell {
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+}
+
+// Clock
+.clock-circle {
+  width: 160px;
+  height: 160px;
+  border: 4px solid gray;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+
+// Buttons
+button {
+  cursor: pointer;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+// Temperature & Resistance text
+.temp-value, .resistance-value {
+  font-size: 24px;
+  font-weight: bold;
+}
+.temp-value {
+  color: #dc2626; // Red for temperature
+}
+.resistance-value {
+  color: #2563eb; // Blue for resistance
+}

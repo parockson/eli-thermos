@@ -1,38 +1,100 @@
-.App {
-  text-align: center;
+/* App.css */
+
+/* General body styling */
+body {
+  @apply bg-gray-100 font-sans;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Taskbar */
+.taskbar {
+  @apply w-full bg-blue-700 text-white py-3 px-6 shadow-md flex items-center;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.taskbar button {
+  @apply bg-white text-blue-700 px-4 py-1 rounded;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+/* Left column buttons */
+.other-buttons {
+  @apply p-3 bg-white shadow rounded flex flex-col gap-2;
 }
 
-.App-link {
-  color: #61dafb;
+.other-buttons button.reset {
+  @apply bg-blue-500 text-white p-2 rounded;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.other-buttons button.start {
+  @apply bg-green-500 text-white p-2 rounded;
+}
+
+.other-buttons button.toggle {
+  @apply bg-gray-700 text-white p-2 rounded;
+}
+
+/* Clock */
+.clock-container {
+  @apply bg-white shadow p-4 rounded text-center;
+}
+
+.clock-dial {
+  @apply w-40 h-40 mx-auto rounded-full border-4 border-gray-400 flex flex-col items-center justify-center;
+}
+
+.clock-buttons {
+  @apply mt-3 flex flex-col gap-2;
+}
+
+.clock-buttons button {
+  @apply p-2 rounded text-white;
+}
+
+.clock-buttons button.switch-mode {
+  @apply bg-indigo-600;
+}
+
+.clock-buttons button.scroll-time {
+  @apply bg-blue-600;
+}
+
+.clock-buttons button.converge {
+  @apply bg-green-600;
+}
+
+.clock-buttons button.diverge {
+  @apply bg-red-600;
+}
+
+/* Grid */
+.grid-container {
+  @apply grid grid-cols-5 gap-2 p-4 rounded bg-gray-200;
+}
+
+.grid-node {
+  @apply bg-white p-4 rounded shadow text-center font-semibold;
+}
+
+/* Readings */
+.readings {
+  @apply bg-white p-4 rounded shadow;
+}
+
+.readings .temperature {
+  @apply text-xl;
+}
+
+.readings .resistance-low {
+  @apply text-blue-600 text-xl font-bold;
+}
+
+.readings .resistance-high {
+  @apply text-red-600 text-xl font-bold;
+}
+
+/* Calculation Panel */
+.calc-panel {
+  @apply bg-white shadow p-4 rounded;
+}
+
+.calc-panel p {
+  @apply text-sm;
 }

@@ -1,0 +1,30 @@
+.buttons-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); // 3 buttons per row
+  gap: 8px;
+  padding: 8px;
+  width: 100%; // ensure they stay inside the container
+  max-width: 250px; // optional: cap max width
+
+  button {
+    padding: 10px 16px; // slightly smaller
+    font-size: 13px; // reduced by ~20%
+    font-weight: bold;
+    background-color: #00bcd4;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: #0097a7;
+      transform: scale(1.05);
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    &:active {
+      transform: scale(0.97);
+    }
+  }
+}

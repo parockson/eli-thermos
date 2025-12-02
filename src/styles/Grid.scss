@@ -1,0 +1,29 @@
+.advanced-grid {
+  position: relative;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  margin: 20px auto;
+
+  .grid-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+  }
+
+  .node, .alpha-node {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    font-size: 12px;
+    font-weight: bold;
+    background-color: white;
+    border-radius: 50%;
+    padding: 2px 4px;
+    border: 1px solid #000;
+  }
+
+  .alpha-node {
+    background-color: red;
+    color: white;
+  }
+}
