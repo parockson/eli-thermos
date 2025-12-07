@@ -1,13 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-export default function GraphGrid({
-  width = 500,
-  height = 630,
-  onBirdMove
-}) {
-  // -----------------------------------------
-  // HARD-CODED GRID COORDINATES
-  // -----------------------------------------
+export default function GraphGrid({ width = 300, height = 430, onBirdMove }) {
   const nodes = {
     A1: { x: 50, y: 50 },  A2: { x: 50, y: 100 }, A3: { x: 50, y: 150 },
     A4: { x: 50, y: 200 }, A5: { x: 50, y: 250 }, A6: { x: 50, y: 300 },
@@ -30,9 +23,6 @@ export default function GraphGrid({
     E7: { x: 250, y: 350 }
   };
 
-  // -----------------------------------------
-  // HARD-CODED α-POINTS
-  // -----------------------------------------
   const alpha = {
     alpha1: { x: 79.29,  y: 270.71 },
     alpha2: { x: 79.29,  y: 129.29 },
@@ -40,18 +30,10 @@ export default function GraphGrid({
     alpha4: { x: 220.71, y: 270.71 }
   };
 
-  // -----------------------------------------
-  // Circle geometry (unchanged)
-  // -----------------------------------------
-  const center = nodes["C4"];
-  const radius = 100;
-
+  const center = nodes["C4"]; const radius = 100;
   const diag1 = [nodes["A2"], nodes["E6"]];
   const diag2 = [nodes["E2"], nodes["A6"]];
 
-  // -----------------------------------------
-  // Bird movements (unchanged)
-  // -----------------------------------------
   const birdMovements = {
     A1: ["A1", "A2", "alpha2"],
     C1: ["C1", "C2", "C2"],
@@ -64,9 +46,6 @@ export default function GraphGrid({
     A7: ["A7", "A6", "alpha1"]
   };
 
-  // -----------------------------------------
-  // Initial bird positions
-  // -----------------------------------------
   const initialBirds = Object.fromEntries(
     Object.entries(birdMovements).map(([label, path]) => [
       label,
@@ -76,7 +55,6 @@ export default function GraphGrid({
 
   const [birds, setBirds] = useState(initialBirds);
 
-  // NEW: store last snapped node label per bird
   const [lastNode, setLastNode] = useState(
     Object.fromEntries(
       Object.entries(birdMovements).map(([label, path]) => [label, path[0]])
@@ -86,9 +64,6 @@ export default function GraphGrid({
   const [dragging, setDragging] = useState(null);
   const [flapFrame, setFlapFrame] = useState(0);
 
-  // -----------------------------------------
-  // Bird animation (unchanged)
-  // -----------------------------------------
   useEffect(() => {
     if (!dragging) return;
     const interval = setInterval(() => setFlapFrame((f) => (f + 1) % 2), 150);
@@ -96,12 +71,8 @@ export default function GraphGrid({
   }, [dragging]);
 
   const birdNormal = "/birds/bird-normal.png";
-  const birdFlap =
-    flapFrame === 0 ? "/birds/bird-flap1.png" : "/birds/bird-flap2.png";
+  const birdFlap = flapFrame === 0 ? "/birds/bird-flap1.png" : "/birds/bird-flap2.png";
 
-  // -----------------------------------------
-  // Drag logic
-  // -----------------------------------------
   function onMouseDown(label) {
     if (birdMovements[label].length <= 1) return;
     setDragging(label);
@@ -128,54 +99,31 @@ export default function GraphGrid({
 
     const snapPoints = allowed.map((k) => nodes[k] || alpha[k]);
 
-    // Snap to closest
     let best = snapPoints[0];
     let dist = Infinity;
     for (let p of snapPoints) {
       const d = Math.hypot(p.x - pos.x, p.y - pos.y);
-      if (d < dist) {
-        dist = d;
-        best = p;
-      }
+      if (d < dist) { dist = d; best = p; }
     }
 
     const toLabel = allowed[snapPoints.indexOf(best)];
-    const fromLabel = lastNode[bird];          // NEW: previous node
+    const fromLabel = lastNode[bird];
     const fromPos = nodes[fromLabel] || alpha[fromLabel];
     const toPos = best;
 
-    // NEW: ALWAYS compute true segment distance
-    const movementDistance = Math.hypot(
-      toPos.x - fromPos.x,
-      toPos.y - fromPos.y
-    );
+    const movementDistance = Math.hypot(toPos.x - fromPos.x, toPos.y - fromPos.y);
 
     const isDiagonal = toLabel.startsWith("alpha");
 
     if (onBirdMove) {
-      onBirdMove({
-        bird,
-        fromLabel,
-        toLabel,
-        fromPos,
-        toPos,
-        isDiagonal,
-        distance: movementDistance   // NEW & CORRECT
-      });
+      onBirdMove({ bird, fromLabel, toLabel, fromPos, toPos, isDiagonal, distance: movementDistance });
     }
 
-    // snap to location
     setBirds((prev) => ({ ...prev, [bird]: best }));
-
-    // update last node
     setLastNode((prev) => ({ ...prev, [bird]: toLabel }));
-
     setDragging(null);
   }
 
-  // -----------------------------------------
-  // Render (unchanged)
-  // -----------------------------------------
   return (
     <svg
       width={width}
@@ -227,18 +175,14 @@ export default function GraphGrid({
       {Object.entries(nodes).map(([label, p]) => (
         <g key={label}>
           <circle cx={p.x} cy={p.y} r={4} fill="white" stroke="black" />
-          <text x={p.x + 8} y={p.y - 6} fontSize="12" fill="#333">
-            {label}
-          </text>
+          <text x={p.x + 8} y={p.y - 6} fontSize="12" fill="#333">{label}</text>
         </g>
       ))}
 
       {Object.entries(alpha).map(([label, p]) => (
         <g key={label}>
           <circle cx={p.x} cy={p.y} r={5} fill="red" />
-          <text x={p.x + 6} y={p.y - 6} fontSize="12" fill="red">
-            {label}
-          </text>
+          <text x={p.x + 6} y={p.y - 6} fontSize="12" fill="red">{label}</text>
         </g>
       ))}
 
