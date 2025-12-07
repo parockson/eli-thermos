@@ -3,105 +3,105 @@ import React, { useState, useEffect } from "react";
 export default function GraphGrid({
   width = 500,
   height = 630,
-  spacingX = 80,
-  spacingY = 80,
-  offsetX = 80,
-  offsetY = 80,
-  onBirdMove // callback to send movement info to CalculationPanel
+  onBirdMove
 }) {
-  const cols = ["A", "B", "C", "D", "E"];
-  const rows = [1, 2, 3, 4, 5, 6, 7];
+  // -----------------------------------------
+  // HARD-CODED GRID COORDINATES
+  // -----------------------------------------
+  const nodes = {
+    A1: { x: 50, y: 50 },  A2: { x: 50, y: 100 }, A3: { x: 50, y: 150 },
+    A4: { x: 50, y: 200 }, A5: { x: 50, y: 250 }, A6: { x: 50, y: 300 },
+    A7: { x: 50, y: 350 },
 
-  // ----------------------------
-  // Compute Nodes
-  // ----------------------------
-  const nodes = {};
-  cols.forEach((c, i) => {
-    rows.forEach((r, j) => {
-      nodes[`${c}${r}`] = { x: offsetX + i * spacingX, y: offsetY + j * spacingY };
-    });
-  });
+    B1: { x: 100, y: 50 },  B2: { x: 100, y: 100 }, B3: { x: 100, y: 150 },
+    B4: { x: 100, y: 200 }, B5: { x: 100, y: 250 }, B6: { x: 100, y: 300 },
+    B7: { x: 100, y: 350 },
 
-  // ----------------------------
-  // Circle Center & Radius
-  // ----------------------------
+    C1: { x: 150, y: 50 },  C2: { x: 150, y: 100 }, C3: { x: 150, y: 150 },
+    C4: { x: 150, y: 200 }, C5: { x: 150, y: 250 }, C6: { x: 150, y: 300 },
+    C7: { x: 150, y: 350 },
+
+    D1: { x: 200, y: 50 },  D2: { x: 200, y: 100 }, D3: { x: 200, y: 150 },
+    D4: { x: 200, y: 200 }, D5: { x: 200, y: 250 }, D6: { x: 200, y: 300 },
+    D7: { x: 200, y: 350 },
+
+    E1: { x: 250, y: 50 },  E2: { x: 250, y: 100 }, E3: { x: 250, y: 150 },
+    E4: { x: 250, y: 200 }, E5: { x: 250, y: 250 }, E6: { x: 250, y: 300 },
+    E7: { x: 250, y: 350 }
+  };
+
+  // -----------------------------------------
+  // HARD-CODED α-POINTS
+  // -----------------------------------------
+  const alpha = {
+    alpha1: { x: 79.29,  y: 270.71 },
+    alpha2: { x: 79.29,  y: 129.29 },
+    alpha3: { x: 220.71, y: 129.29 },
+    alpha4: { x: 220.71, y: 270.71 }
+  };
+
+  // -----------------------------------------
+  // Circle geometry (unchanged)
+  // -----------------------------------------
   const center = nodes["C4"];
-  const circlePoints = [nodes["C2"], nodes["C6"], nodes["A4"], nodes["E4"]];
-  const radius = Math.max(...circlePoints.map(p => Math.hypot(p.x - center.x, p.y - center.y)));
+  const radius = 100;
 
-  // Diagonals
   const diag1 = [nodes["A2"], nodes["E6"]];
   const diag2 = [nodes["E2"], nodes["A6"]];
 
-  // α-points
-  function lineCircleIntersection(p1, p2, cx, cy, r) {
-    const x1 = p1.x - cx;
-    const y1 = p1.y - cy;
-    const x2 = p2.x - cx;
-    const y2 = p2.y - cy;
-    const dx = x2 - x1;
-    const dy = y2 - y1;
-    const dr2 = dx * dx + dy * dy;
-    const D = x1 * y2 - x2 * y1;
-    const disc = r * r * dr2 - D * D;
-    if (disc < 0) return [];
-    const sqrtDisc = Math.sqrt(disc);
-    const sgn = dy < 0 ? -1 : 1;
-    const ix1 = (D * dy + sgn * dx * sqrtDisc) / dr2 + cx;
-    const iy1 = (-D * dx + Math.abs(dy) * sqrtDisc) / dr2 + cy;
-    const ix2 = (D * dy - sgn * dx * sqrtDisc) / dr2 + cx;
-    const iy2 = (-D * dx - Math.abs(dy) * sqrtDisc) / dr2 + cy;
-    return [{ x: ix1, y: iy1 }, { x: ix2, y: iy2 }];
-  }
-
-  const αd1 = lineCircleIntersection(diag1[0], diag1[1], center.x, center.y, radius);
-  const αd2 = lineCircleIntersection(diag2[0], diag2[1], center.x, center.y, radius);
-
-  const alpha = {
-    α1: αd2[0],
-    α2: αd1[0],
-    α3: αd2[1],
-    α4: αd1[1]
-  };
-
-  // ----------------------------
-  // Bird movements & initial positions
-  // ----------------------------
+  // -----------------------------------------
+  // Bird movements (unchanged)
+  // -----------------------------------------
   const birdMovements = {
-    A1: ["A1", "A2", "α4"],
+    A1: ["A1", "A2", "alpha2"],
     C1: ["C1", "C2", "C2"],
-    E1: ["E1", "E2", "α3"],
+    E1: ["E1", "E2", "alpha3"],
     A4: ["A4", "A4", "A4"],
     C4: ["C4", "C4", "C4"],
     E4: ["E4", "E4", "E4"],
-    E7: ["E7", "E6", "α2"],
+    E7: ["E7", "E6", "alpha4"],
     C7: ["C7", "C6", "C6"],
-    A7: ["A7", "A6", "α1"]
+    A7: ["A7", "A6", "alpha1"]
   };
 
+  // -----------------------------------------
+  // Initial bird positions
+  // -----------------------------------------
   const initialBirds = Object.fromEntries(
-    Object.entries(birdMovements).map(([label, path]) => [label, nodes[path[0]] || alpha[path[0]]])
+    Object.entries(birdMovements).map(([label, path]) => [
+      label,
+      nodes[path[0]] || alpha[path[0]]
+    ])
   );
 
   const [birds, setBirds] = useState(initialBirds);
+
+  // NEW: store last snapped node label per bird
+  const [lastNode, setLastNode] = useState(
+    Object.fromEntries(
+      Object.entries(birdMovements).map(([label, path]) => [label, path[0]])
+    )
+  );
+
   const [dragging, setDragging] = useState(null);
   const [flapFrame, setFlapFrame] = useState(0);
 
-  // ----------------------------
-  // Wing flap animation
-  // ----------------------------
+  // -----------------------------------------
+  // Bird animation (unchanged)
+  // -----------------------------------------
   useEffect(() => {
     if (!dragging) return;
-    const interval = setInterval(() => setFlapFrame(f => (f + 1) % 2), 150);
+    const interval = setInterval(() => setFlapFrame((f) => (f + 1) % 2), 150);
     return () => clearInterval(interval);
   }, [dragging]);
 
-  // ----------------------------
-  // Bird images
-  // ----------------------------
   const birdNormal = "/birds/bird-normal.png";
-  const birdFlap = flapFrame === 0 ? "/birds/bird-flap1.png" : "/birds/bird-flap2.png";
+  const birdFlap =
+    flapFrame === 0 ? "/birds/bird-flap1.png" : "/birds/bird-flap2.png";
 
+  // -----------------------------------------
+  // Drag logic
+  // -----------------------------------------
   function onMouseDown(label) {
     if (birdMovements[label].length <= 1) return;
     setDragging(label);
@@ -110,58 +110,72 @@ export default function GraphGrid({
   function onMouseMove(e) {
     if (!dragging) return;
     const rect = e.target.closest("svg").getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    setBirds(prev => ({ ...prev, [dragging]: { x, y } }));
+    setBirds((prev) => ({
+      ...prev,
+      [dragging]: {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      }
+    }));
   }
 
   function onMouseUp() {
     if (!dragging) return;
-    const label = dragging;
-    const pos = birds[label];
-    const allowedLabels = birdMovements[label];
-    const snapPoints = allowedLabels.map(l => nodes[l] || alpha[l]);
 
-    // Snap to closest allowed point
+    const bird = dragging;
+    const pos = birds[bird];
+    const allowed = birdMovements[bird];
+
+    const snapPoints = allowed.map((k) => nodes[k] || alpha[k]);
+
+    // Snap to closest
     let best = snapPoints[0];
-    let minDist = Infinity;
+    let dist = Infinity;
     for (let p of snapPoints) {
       const d = Math.hypot(p.x - pos.x, p.y - pos.y);
-      if (d < minDist) {
-        minDist = d;
+      if (d < dist) {
+        dist = d;
         best = p;
       }
     }
 
-    // ----------------------------
-    // Track movement logic for CalculationPanel
-    // ----------------------------
-    const fromPos = birds[label];
+    const toLabel = allowed[snapPoints.indexOf(best)];
+    const fromLabel = lastNode[bird];          // NEW: previous node
+    const fromPos = nodes[fromLabel] || alpha[fromLabel];
     const toPos = best;
-    const fromLabel = label;
-    const toLabel = allowedLabels[snapPoints.indexOf(best)];
-    const isDiagonal = Object.keys(alpha).includes(toLabel);
-    const distance = isDiagonal
-      ? Math.hypot(toPos.x - fromPos.x, toPos.y - fromPos.y)
-      : Math.abs(toPos.y - fromPos.y);
 
-    // Call parent callback (your CalculationPanel should use this)
+    // NEW: ALWAYS compute true segment distance
+    const movementDistance = Math.hypot(
+      toPos.x - fromPos.x,
+      toPos.y - fromPos.y
+    );
+
+    const isDiagonal = toLabel.startsWith("alpha");
+
     if (onBirdMove) {
       onBirdMove({
-        bird: label,
+        bird,
         fromLabel,
         toLabel,
         fromPos,
         toPos,
         isDiagonal,
-        distance
+        distance: movementDistance   // NEW & CORRECT
       });
     }
 
-    setBirds(prev => ({ ...prev, [label]: { x: best.x, y: best.y } }));
+    // snap to location
+    setBirds((prev) => ({ ...prev, [bird]: best }));
+
+    // update last node
+    setLastNode((prev) => ({ ...prev, [bird]: toLabel }));
+
     setDragging(null);
   }
 
+  // -----------------------------------------
+  // Render (unchanged)
+  // -----------------------------------------
   return (
     <svg
       width={width}
@@ -170,55 +184,73 @@ export default function GraphGrid({
       onMouseMove={onMouseMove}
       onMouseUp={onMouseUp}
     >
-      {/* Outer rectangle */}
       <polygon
-        points={`${nodes["A1"].x},${nodes["A1"].y} ${nodes["E1"].x},${nodes["E1"].y} ${nodes["E7"].x},${nodes["E7"].y} ${nodes["A7"].x},${nodes["A7"].y}`}
+        points={`${nodes.A1.x},${nodes.A1.y} ${nodes.E1.x},${nodes.E1.y} ${nodes.E7.x},${nodes.E7.y} ${nodes.A7.x},${nodes.A7.y}`}
         fill="none"
         stroke="blue"
         strokeWidth="2"
       />
 
-      {/* Inner square */}
       <polygon
-        points={`${nodes["A2"].x},${nodes["A2"].y} ${nodes["E2"].x},${nodes["E2"].y} ${nodes["E6"].x},${nodes["E6"].y} ${nodes["A6"].x},${nodes["A6"].y}`}
+        points={`${nodes.A2.x},${nodes.A2.y} ${nodes.E2.x},${nodes.E2.y} ${nodes.E6.x},${nodes.E6.y} ${nodes.A6.x},${nodes.A6.y}`}
         fill="none"
         stroke="orange"
         strokeWidth="2"
       />
 
-      {/* Circle */}
-      <circle cx={center.x} cy={center.y} r={radius} fill="none" stroke="green" strokeWidth="2" />
+      <circle
+        cx={center.x}
+        cy={center.y}
+        r={radius}
+        fill="none"
+        stroke="green"
+        strokeWidth="2"
+      />
 
-      {/* Diagonals */}
-      <line x1={diag1[0].x} y1={diag1[0].y} x2={diag1[1].x} y2={diag1[1].y} stroke="purple" strokeWidth="2" />
-      <line x1={diag2[0].x} y1={diag2[0].y} x2={diag2[1].x} y2={diag2[1].y} stroke="purple" strokeWidth="2" />
+      <line
+        x1={diag1[0].x}
+        y1={diag1[0].y}
+        x2={diag1[1].x}
+        y2={diag1[1].y}
+        stroke="purple"
+        strokeWidth="2"
+      />
+      <line
+        x1={diag2[0].x}
+        y1={diag2[0].y}
+        x2={diag2[1].x}
+        y2={diag2[1].y}
+        stroke="purple"
+        strokeWidth="2"
+      />
 
-      {/* Nodes */}
-      {Object.entries(nodes).map(([label, pos]) => (
+      {Object.entries(nodes).map(([label, p]) => (
         <g key={label}>
-          <circle cx={pos.x} cy={pos.y} r={5} fill="white" stroke="black" />
-          <text x={pos.x + 10} y={pos.y - 8} fontSize="13" fontWeight="bold" fill="#333">{label}</text>
+          <circle cx={p.x} cy={p.y} r={4} fill="white" stroke="black" />
+          <text x={p.x + 8} y={p.y - 6} fontSize="12" fill="#333">
+            {label}
+          </text>
         </g>
       ))}
 
-      {/* α-points */}
-      {Object.entries(alpha).map(([label, pos]) => (
+      {Object.entries(alpha).map(([label, p]) => (
         <g key={label}>
-          <circle cx={pos.x} cy={pos.y} r={5} fill="red" />
-          <text x={pos.x + 8} y={pos.y - 8} fontSize="14" fill="red">{label}</text>
+          <circle cx={p.x} cy={p.y} r={5} fill="red" />
+          <text x={p.x + 6} y={p.y - 6} fontSize="12" fill="red">
+            {label}
+          </text>
         </g>
       ))}
 
-      {/* Birds */}
-      {Object.entries(birds).map(([label, pos]) => (
+      {Object.entries(birds).map(([label, p]) => (
         <image
           key={label}
           href={dragging === label ? birdFlap : birdNormal}
-          x={pos.x - 75}  // default bird size 50px
-          y={pos.y - 75}
-          width={150}
-          height={150}
-          style={{ cursor: "grab", userSelect: "none" }}
+          x={p.x - 50}
+          y={p.y - 50}
+          width={100}
+          height={100}
+          style={{ cursor: "grab" }}
           onMouseDown={() => onMouseDown(label)}
         />
       ))}
