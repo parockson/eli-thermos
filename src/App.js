@@ -1,3 +1,6 @@
+// ===============================
+// App.jsx (FULL – FIXED & WIRED)
+// ===============================
 import { useState } from "react";
 import Taskbar from "./components/Taskbar";
 import OtherButtons from "./components/OtherButtons";
@@ -13,40 +16,37 @@ const birdLabels = ["A1","C1","E1","A4","C4","E4","E7","C7","A7"];
 
 const birdTemperatureTable = {
   A1: [
-    { from: "A1", to: "A2", ambient: 40.3, internal: 40.3 },
-    { from: "A2", to: "alpha4", ambient: 40.3, internal: 40 }
+    { from: "A1", to: "A2", ambient: 40.3, internal: 40.3, resistance: 5238 },
+    { from: "A2", to: "alpha2", ambient: 30, internal: 40.3, resistance: 5238 }
   ],
   C1: [
-    { from: "C1", to: "C2", ambient: 40.3, internal: 40.3 },
-    { from: "C2", to: "alpha4", ambient: 40, internal: 40.3 }
+    { from: "C1", to: "C2", ambient: 40.3, internal: 40.3, resistance: 5238 },
+    { from: "C2", to: "C2", ambient: 35.3, internal: 40.3, resistance: 5238 }
   ],
   E1: [
-    { from: "E1", to: "E2", ambient: 40.3, internal: 40.3 },
-    { from: "E2", to: "alpha3", ambient: 40, internal: 40.3 }
+    { from: "E1", to: "E2", ambient: 40.3, internal: 40.3, resistance: 5238 },
+    { from: "E2", to: "alpha3", ambient: 30, internal: 40.3, resistance: 5238 }
   ],
   A4: [
-    { from: "A4", to: "A5", ambient: 40.3, internal: 40.3 },
-    { from: "A5", to: "alpha2", ambient: 40, internal: 40.3 }
+    { from: "A4", to: "A4", ambient: 40, internal: 40.3, resistance: 5238 }
   ],
   C4: [
-    { from: "C4", to: "C5", ambient: 40.3, internal: 40.3 },
-    { from: "C5", to: "alpha3", ambient: 40, internal: 40.3 }
+    { from: "C4", to: "C4", ambient: 40, internal: 40.3, resistance: 5238 }
   ],
   E4: [
-    { from: "E4", to: "E5", ambient: 40.3, internal: 40.3 },
-    { from: "E5", to: "alpha2", ambient: 40, internal: 40.3 }
+    { from: "E4", to: "E4", ambient: 40, internal: 40.3, resistance: 5238 }
   ],
   E7: [
-    { from: "E7", to: "E6", ambient: 40.3, internal: 40.3 },
-    { from: "E6", to: "alpha1", ambient: 35.3, internal: 35.3 }
+    { from: "E7", to: "E6", ambient: 40.3, internal: 40.3, resistance: 5238 },
+    { from: "E6", to: "alpha4", ambient: 30, internal: 40.3, resistance: 5238 }
   ],
   C7: [
-    { from: "C7", to: "C6", ambient: 40.3, internal: 40.3 },
-    { from: "C6", to: "alpha1", ambient: 35.3, internal: 35.3 }
+    { from: "C7", to: "C6", ambient: 40.3, internal: 40.3, resistance: 5238 },
+    { from: "C6", to: "C6", ambient: 35.3, internal: 40.3, resistance: 5238 }
   ],
   A7: [
-    { from: "A7", to: "A6", ambient: 40.3, internal: 40.3 },
-    { from: "A6", to: "alpha1", ambient: 35.3, internal: 35.3 }
+    { from: "A7", to: "A6", ambient: 40.3, internal: 40.3, resistance: 5238 },
+    { from: "A6", to: "alpha1", ambient: 30, internal: 40.3, resistance: 5238 }
   ]
 };
 
@@ -60,6 +60,9 @@ function App() {
     event: null
   });
 
+  const [ambientTemp, setAmbientTemp] = useState(null);
+  const [resistance, setResistance] = useState(null);
+
   const [modal, setModal] = useState({
     open: false,
     title: "",
@@ -71,12 +74,11 @@ function App() {
   return (
     <div>
       <Taskbar />
+
       <div className="container">
         <div className="left">
           <OtherButtons setClockState={setClockState} setModal={setModal} />
-
           <Clock clockState={clockState} />
-
           <CalculationPanel clockState={clockState} lastMove={lastMove} />
         </div>
 
@@ -89,32 +91,35 @@ function App() {
               if (birdIndex === -1) return;
 
               const steps = birdTemperatureTable[move.bird];
-              const stepIndex = steps.findIndex(
-                s => s.from === move.fromLabel && s.to === move.toLabel
-              );
-              const stepData = steps[stepIndex] || steps[0];
+              const step =
+                steps.find(
+                  s => s.from === move.fromLabel && s.to === move.toLabel
+                ) || steps[0];
 
               setClockState(prev => {
-                const updated = [...prev.birds];
-                updated[birdIndex] = {
-                  internalTemperature: stepData.internal,
-                  internalResistance: stepData.internal
+                const birds = [...prev.birds];
+                birds[birdIndex] = {
+                  internalTemperature: step.internal,
+                  internalResistance: step.resistance
                 };
 
                 return {
                   ...prev,
-                  birds: updated,
+                  birds,
                   timeIndex: birdIndex,
                   event: move
                 };
               });
+
+              setAmbientTemp(step.ambient);
+              setResistance(step.resistance);
             }}
           />
         </div>
 
         <div className="right">
-          <TemperatureReadings value={null} />
-          <ResistanceReadings value={null} />
+          <TemperatureReadings value={ambientTemp} />
+          <ResistanceReadings value={resistance} />
         </div>
       </div>
 
@@ -122,7 +127,9 @@ function App() {
         isOpen={modal.open}
         title={modal.title}
         content={modal.content}
-        onClose={() => setModal({ open: false, title: "", content: "" })}
+        onClose={() =>
+          setModal({ open: false, title: "", content: "" })
+        }
       />
     </div>
   );

@@ -8,6 +8,9 @@ export default function OtherButtons({ setClockState, setModal }) {
       <button onClick={() => window.location.reload()}>
         Reset
       </button>
+      <button onClick={() => window.location.reload()}>
+        Test
+      </button>
 
       <button
         onClick={() =>
