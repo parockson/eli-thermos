@@ -1,6 +1,3 @@
-// ===============================
-// App.jsx (FULL – VIDEO BACKGROUND)
-// ===============================
 import { useState } from "react";
 import Taskbar from "./components/Taskbar";
 import OtherButtons from "./components/OtherButtons";
@@ -56,6 +53,7 @@ function App() {
 
   const [ambientTemp, setAmbientTemp] = useState(null);
   const [resistance, setResistance] = useState(null);
+  const [resistanceColor, setResistanceColor] = useState("#9AD3A6"); // default pale green
 
   const [modal, setModal] = useState({
     open: false,
@@ -67,19 +65,10 @@ function App() {
 
   return (
     <div className="app-root">
-
-      {/* 🔹 BACKGROUND VIDEO (MUTED) */}
-      <video
-        className="bg-video"
-        autoPlay
-        loop
-        muted
-        playsInline
-      >
+      <video className="bg-video" autoPlay loop muted playsInline>
         <source src="/bg-bird.mp4" type="video/mp4" />
       </video>
 
-      {/* 🔹 APP UI */}
       <Taskbar />
 
       <div className="container">
@@ -121,12 +110,18 @@ function App() {
               setAmbientTemp(step.ambient);
               setResistance(step.resistance);
             }}
+            onNodeColorChange={(color) => {
+              setResistanceColor(color); // live color from Grid
+            }}
           />
         </div>
 
         <div className="right">
           <TemperatureReadings value={ambientTemp} />
-          <ResistanceReadings value={resistance} />
+          <ResistanceReadings
+            value={resistance}
+            color={resistanceColor} // use live color
+          />
         </div>
       </div>
 
