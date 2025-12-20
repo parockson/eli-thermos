@@ -4,33 +4,25 @@ import React, { useState, useEffect } from "react";
 // STATIC GRID DATA & CONFIGURATION
 // ===============================
 
-export const nodes = {
-  A1: { x: 50, y: 50 }, A2: { x: 50, y: 100 }, A3: { x: 50, y: 150 },
-  A4: { x: 50, y: 200 }, A5: { x: 50, y: 250 }, A6: { x: 50, y: 300 },
-  A7: { x: 50, y: 350 },
+const columns = ['A', 'B', 'C', 'D', 'E'];
+const rows = [1, 2, 3, 4, 5, 6, 7];
 
-  B1: { x: 100, y: 50 }, B2: { x: 100, y: 100 }, B3: { x: 100, y: 150 },
-  B4: { x: 100, y: 200 }, B5: { x: 100, y: 250 }, B6: { x: 100, y: 300 },
-  B7: { x: 100, y: 350 },
+export const nodes = {};
 
-  C1: { x: 150, y: 50 }, C2: { x: 150, y: 100 }, C3: { x: 150, y: 150 },
-  C4: { x: 150, y: 200 }, C5: { x: 150, y: 250 }, C6: { x: 150, y: 300 },
-  C7: { x: 150, y: 350 },
-
-  D1: { x: 200, y: 50 }, D2: { x: 200, y: 100 }, D3: { x: 200, y: 150 },
-  D4: { x: 200, y: 200 }, D5: { x: 200, y: 250 }, D6: { x: 200, y: 300 },
-  D7: { x: 200, y: 350 },
-
-  E1: { x: 250, y: 50 }, E2: { x: 250, y: 100 }, E3: { x: 250, y: 150 },
-  E4: { x: 250, y: 200 }, E5: { x: 250, y: 250 }, E6: { x: 250, y: 300 },
-  E7: { x: 250, y: 350 }
-};
+columns.forEach((col, colIdx) => {
+  rows.forEach((row, rowIdx) => {
+    nodes[`${col}${row}`] = { 
+      x: (colIdx + 1) * 70, 
+      y: (rowIdx + 1) * 70 
+    };
+  });
+});
 
 export const alpha = {
-  alpha1: { x: 79.29, y: 270.71 },
-  alpha2: { x: 79.29, y: 129.29 },
-  alpha3: { x: 220.71, y: 129.29 },
-  alpha4: { x: 220.71, y: 270.71 }
+  alpha1: { x: 110.00, y: 380.00 },
+  alpha2: { x: 110.00, y: 180 },
+  alpha3: { x: 310.00, y: 180 },
+  alpha4: { x: 310, y: 380 }
 };
 
 // ===============================
@@ -38,7 +30,7 @@ export const alpha = {
 // ===============================
 
 const center = nodes.C4;
-const radius = 100;
+const radius = 140;
 const diag1 = [nodes.A2, nodes.E6];
 const diag2 = [nodes.E2, nodes.A6];
 
@@ -102,7 +94,7 @@ const initialLastNodes = Object.fromEntries(
 // COMPONENT
 // ===============================
 
-export default function Grid({ width = 300, height = 430, onBirdMove, onNodeColorChange }) {
+export default function Grid({ width = 430, height = 550, onBirdMove, onNodeColorChange }) {
   const [birds, setBirds] = useState(initialBirdPositions);
   const [lastNode, setLastNode] = useState(initialLastNodes);
   const [dragging, setDragging] = useState(null);
