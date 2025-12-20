@@ -319,7 +319,7 @@ export default function Grid({ width = 430, height = 550, onBirdMove, onNodeColo
 
       {/* BIRDS */}
       {Object.entries(birds).map(([l, p]) => {
-        const BIRD_SIZE = 250;
+        const BIRD_SIZE = 150;
         const HALF_BIRD = BIRD_SIZE / 2;
         const isFlapping = dragging === l;
 
