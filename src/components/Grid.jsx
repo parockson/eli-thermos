@@ -11,9 +11,9 @@ export const nodes = {};
 
 columns.forEach((col, colIdx) => {
   rows.forEach((row, rowIdx) => {
-    nodes[`${col}${row}`] = { 
-      x: (colIdx + 1) * 70, 
-      y: (rowIdx + 1) * 70 
+    nodes[`${col}${row}`] = {
+      x: (colIdx + 1) * 70,
+      y: (rowIdx + 1) * 70
     };
   });
 });
@@ -43,14 +43,14 @@ const COLOR_DEEP_GREEN = "#1F6F43";  // Convergence
 const COLOR_PALE_GREEN = "#9AD3A6";  // Default
 
 const dispersalNodes = [
-  "A1","B1","C1","D1","E1",
-  "A7","B7","C7","D7","E7"
+  "A1", "B1", "C1", "D1", "E1",
+  "A7", "B7", "C7", "D7", "E7"
 ];
 
 const convergenceNodes = [
-  "alpha1","alpha2","alpha3","alpha4",
-  "B3","B4","D3","B5","D4","D5",
-  "C2","C3","C4","C5","C6"
+  "alpha1", "alpha2", "alpha3", "alpha4",
+  "B3", "B4", "D3", "B5", "D4", "D5",
+  "C2", "C3", "C4", "C5", "C6"
 ];
 
 // 🔒 Dispersal nodes are immutable
@@ -99,7 +99,7 @@ export default function Grid({ width = 430, height = 550, onBirdMove, onNodeColo
   const [lastNode, setLastNode] = useState(initialLastNodes);
   const [dragging, setDragging] = useState(null);
   const [flapFrame, setFlapFrame] = useState({});
-const [selectedBird, setSelectedBird] = useState(null);
+  const [selectedBird, setSelectedBird] = useState(null);
 
   const [nodeColors, setNodeColors] = useState(() => {
     const c = {};
@@ -197,9 +197,9 @@ const [selectedBird, setSelectedBird] = useState(null);
     setSelectedBird(bird); // keep selected bird
   }
 
-  const birdImg = dragging
-    ? flapFrame === 0 ? "/birds/bird-flap1.png" : "/birds/bird-flap2.png"
-    : "/birds/bird-normal.png";
+  // const birdImg = dragging
+  //   ? flapFrame === 0 ? "/birds/bird-flap1.png" : "/birds/bird-flap2.png"
+  //   : "/birds/bird-normal.png";
 
   return (
     <svg
@@ -208,7 +208,7 @@ const [selectedBird, setSelectedBird] = useState(null);
       onMouseMove={onMouseMove}
       onMouseUp={onMouseUp}
       onMouseLeave={onMouseUp}
-      // style={{  border: "1px solid #ccc" }}
+    // style={{  border: "1px solid #ccc" }}
     >
       {/* BACKGROUND SHAPES */}
       <polygon
@@ -245,18 +245,32 @@ const [selectedBird, setSelectedBird] = useState(null);
       ))}
 
       {/* BIRDS */}
-      {Object.entries(birds).map(([l, p]) => (
-        <image
-          key={l}
-          href={birdImg}
-          x={p.x - 50}
-          y={p.y - 50}
-          width={100}
-          height={100}
-          onMouseDown={(e) => onMouseDown(l, e)}
-          style={{ cursor: "grab" }}
-        />
-      ))}
+      {Object.entries(birds).map(([l, p]) => {
+        const BIRD_SIZE = 150;
+        const HALF_BIRD = BIRD_SIZE / 2;
+
+        const isFlapping = dragging === l;
+
+        const birdImg = isFlapping
+          ? flapFrame === 0
+            ? "/birds/bird-flap1.png"
+            : "/birds/bird-flap2.png"
+          : "/birds/bird-normal.png";
+
+        return (
+          <image
+            key={l}
+            href={birdImg}
+            x={p.x - HALF_BIRD}
+            y={p.y - HALF_BIRD}
+            width={BIRD_SIZE}
+            height={BIRD_SIZE}
+            onMouseDown={(e) => onMouseDown(l, e)}
+            style={{ cursor: "grab" }}
+          />
+        );
+      })}
+
     </svg>
   );
 }
