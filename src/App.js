@@ -74,7 +74,7 @@ function App() {
       <div className="container">
         <div className="left">
           <OtherButtons setClockState={setClockState} setModal={setModal} />
-         <TemperatureReadings value={ambientTemp} />
+          <Clock clockState={clockState} />
           <CalculationPanel clockState={clockState} lastMove={lastMove} />
         </div>
 
@@ -117,8 +117,7 @@ function App() {
         </div>
 
         <div className="right">
-           <Clock clockState={clockState} />
-          
+          <TemperatureReadings value={ambientTemp} />
           <ResistanceReadings
             value={resistance}
             color={resistanceColor} // use live color

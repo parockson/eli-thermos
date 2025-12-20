@@ -140,3 +140,68 @@ button {
   z-index: -1;
   opacity: 0.35; // Adjust the opacity as needed
 }
+
+.calculation-panel {
+  // CONTROL FONT SIZES HERE
+  $title-size: 1.0rem;
+  $body-size: 0.7rem;
+  $formula-size: 0.8rem;
+  $result-size: 1.1rem;
+
+  padding: 10px;
+  background: #fff; // Slight transparency
+  border-radius: 8px;
+
+  .panel-title {
+    font-size: $title-size;
+    margin-bottom: 12px;
+    color: #000;
+    border-bottom: 1px solid #444;
+  }
+
+  .panel-row {
+    margin-bottom: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .panel-text {
+    font-size: $body-size;
+    margin: 4px 0;
+    color: red; // Dark text for visibility
+
+    strong {
+      color: #444; // Matches your resistance color theme
+    }
+  }
+
+  .formula-section {
+    margin-top: 10px;
+    padding: 8px;
+    background: #222;
+    border-radius: 4px;
+  }
+
+  .formula-section p {
+    margin: 0 0 6px 0;
+    color: red;
+  }
+
+  .formula-text {
+    display: block;
+    font-size: $formula-size;
+    font-family: 'Courier New', Courier, monospace;
+    color: #ffcc00; // Gold color for math formulas
+    word-break: break-all;
+    margin: 5px 0;
+  }
+
+  .result-text {
+    font-size: $result-size;
+    font-weight: bold;
+    color: #fff;
+    // text-align: right;
+  }
+}
