@@ -8,8 +8,8 @@ export default function OtherButtons({ setModal }) {
         Reset
       </button>
 
-      <button onClick={() => window.location.reload()}>
-        Test
+      <button onClick={() => window.open('https://thermoregulation.netlify.app/', '_blank', 'noopener,noreferrer')}>
+        Quiz
       </button>
 
       <button
