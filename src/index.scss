@@ -124,3 +124,19 @@ button {
 .resistance-value {
   color: #2563eb; // Blue for resistance
 }
+
+.app-root {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.bg-video {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: -1;
+  opacity: 0.35; // adjust if needed
+}

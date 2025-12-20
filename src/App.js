@@ -1,5 +1,5 @@
 // ===============================
-// App.jsx (FULL – FIXED & WIRED)
+// App.jsx (FULL – VIDEO BACKGROUND)
 // ===============================
 import { useState } from "react";
 import Taskbar from "./components/Taskbar";
@@ -27,15 +27,9 @@ const birdTemperatureTable = {
     { from: "E1", to: "E2", ambient: 40.3, internal: 40.3, resistance: 5238 },
     { from: "E2", to: "alpha3", ambient: 30, internal: 40.3, resistance: 5238 }
   ],
-  A4: [
-    { from: "A4", to: "A4", ambient: 40, internal: 40.3, resistance: 5238 }
-  ],
-  C4: [
-    { from: "C4", to: "C4", ambient: 40, internal: 40.3, resistance: 5238 }
-  ],
-  E4: [
-    { from: "E4", to: "E4", ambient: 40, internal: 40.3, resistance: 5238 }
-  ],
+  A4: [{ from: "A4", to: "A4", ambient: 40, internal: 40.3, resistance: 5238 }],
+  C4: [{ from: "C4", to: "C4", ambient: 40, internal: 40.3, resistance: 5238 }],
+  E4: [{ from: "E4", to: "E4", ambient: 40, internal: 40.3, resistance: 5238 }],
   E7: [
     { from: "E7", to: "E6", ambient: 40.3, internal: 40.3, resistance: 5238 },
     { from: "E6", to: "alpha4", ambient: 30, internal: 40.3, resistance: 5238 }
@@ -72,7 +66,20 @@ function App() {
   const [lastMove, setLastMove] = useState(null);
 
   return (
-    <div>
+    <div className="app-root">
+
+      {/* 🔹 BACKGROUND VIDEO (MUTED) */}
+      <video
+        className="bg-video"
+        autoPlay
+        loop
+        muted
+        playsInline
+      >
+        <source src="/bg-bird.mp4" type="video/mp4" />
+      </video>
+
+      {/* 🔹 APP UI */}
       <Taskbar />
 
       <div className="container">
