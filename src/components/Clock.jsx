@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Clock({ clockState, size = 300 }) {
+export default function Clock({ clockState, size = 200 }) {
   const { birds, timeIndex } = clockState;
 
   const center = size / 2;
@@ -26,7 +26,7 @@ export default function Clock({ clockState, size = 300 }) {
       height={size}
       style={{
         background: "#fdfdfd",
-        borderRadius: "50%",
+        borderRadius: "100%",
         boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
       }}
     >
@@ -45,7 +45,7 @@ export default function Clock({ clockState, size = 300 }) {
         x2={hx}
         y2={hy}
         stroke="#ff5722"
-        strokeWidth="4"
+        strokeWidth="1"
         strokeLinecap="round"
       />
       <circle cx={hx} cy={hy} r={8} fill="#ff5722" />
@@ -68,7 +68,7 @@ export default function Clock({ clockState, size = 300 }) {
             <text
               x={x}
               y={y - 12}
-              fontSize={active ? 18 : 14}
+              fontSize={active ? 9 : 7}
               fontWeight={active ? "bold" : "normal"}
               textAnchor="middle"
               fill="#333"
@@ -79,7 +79,7 @@ export default function Clock({ clockState, size = 300 }) {
             <text
               x={x}
               y={y + 18}
-              fontSize={active ? 18 : 14}
+              fontSize={active ? 9 : 7}
               fontWeight={active ? "bold" : "normal"}
               textAnchor="middle"
               fill="#333"
