@@ -9,7 +9,7 @@ import ResistanceReadings from "./components/ResistanceReadings";
 import Modal from "./components/Modal";
 import "./index.scss";
 
-const birdLabels = ["A1","C1","E1","A4","C4","E4","E7","C7","A7"];
+const birdLabels = ["A1", "C1", "E1", "A4", "C4", "E4", "E7", "C7", "A7"];
 
 const birdTemperatureTable = {
   A1: [
@@ -74,7 +74,7 @@ function App() {
       <div className="container">
         <div className="left">
           <OtherButtons setClockState={setClockState} setModal={setModal} />
-          <Clock clockState={clockState} />
+          <TemperatureReadings value={ambientTemp} />
           <CalculationPanel clockState={clockState} lastMove={lastMove} />
         </div>
 
@@ -117,7 +117,7 @@ function App() {
         </div>
 
         <div className="right">
-          <TemperatureReadings value={ambientTemp} />
+          <Clock clockState={clockState} />
           <ResistanceReadings
             value={resistance}
             color={resistanceColor} // use live color

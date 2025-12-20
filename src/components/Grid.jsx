@@ -98,8 +98,8 @@ export default function Grid({ width = 430, height = 550, onBirdMove, onNodeColo
   const [birds, setBirds] = useState(initialBirdPositions);
   const [lastNode, setLastNode] = useState(initialLastNodes);
   const [dragging, setDragging] = useState(null);
-  const [flapFrame, setFlapFrame] = useState(0);
-  const [selectedBird, setSelectedBird] = useState(null);
+  const [flapFrame, setFlapFrame] = useState({});
+const [selectedBird, setSelectedBird] = useState(null);
 
   const [nodeColors, setNodeColors] = useState(() => {
     const c = {};
@@ -208,7 +208,7 @@ export default function Grid({ width = 430, height = 550, onBirdMove, onNodeColo
       onMouseMove={onMouseMove}
       onMouseUp={onMouseUp}
       onMouseLeave={onMouseUp}
-      style={{ background: "#fafafa", border: "1px solid #ccc" }}
+      // style={{  border: "1px solid #ccc" }}
     >
       {/* BACKGROUND SHAPES */}
       <polygon
