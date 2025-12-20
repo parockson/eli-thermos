@@ -19,9 +19,9 @@ columns.forEach((col, colIdx) => {
 });
 
 export const alpha = {
-  alpha1: { x: 110.00, y: 380.00 },
-  alpha2: { x: 110.00, y: 180 },
-  alpha3: { x: 310.00, y: 180 },
+  alpha1: { x: 110, y: 380 },
+  alpha2: { x: 110, y: 180 },
+  alpha3: { x: 310, y: 180 },
   alpha4: { x: 310, y: 380 }
 };
 
