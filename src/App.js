@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Taskbar from "./components/Taskbar";
 import OtherButtons from "./components/OtherButtons";
 import Clock from "./components/Clock";
@@ -14,31 +14,31 @@ const birdLabels = ["A1", "C1", "E1", "A4", "C4", "E4", "E7", "C7", "A7"];
 const birdTemperatureTable = {
   A1: [
     { from: "A1", to: "A2", ambient: 40.3, internal: 40.3, resistance: 5238 },
-    { from: "A2", to: "alpha2", ambient: 30, internal: 40.3, resistance: 5238 }
+    { from: "A2", to: "alpha2", ambient: 30, internal: 40.3, resistance: 5238 },
   ],
   C1: [
     { from: "C1", to: "C2", ambient: 40.3, internal: 40.3, resistance: 5238 },
-    { from: "C2", to: "C2", ambient: 35.3, internal: 40.3, resistance: 5238 }
+    { from: "C2", to: "C2", ambient: 35.3, internal: 40.3, resistance: 5238 },
   ],
   E1: [
     { from: "E1", to: "E2", ambient: 40.3, internal: 40.3, resistance: 5238 },
-    { from: "E2", to: "alpha3", ambient: 30, internal: 40.3, resistance: 5238 }
+    { from: "E2", to: "alpha3", ambient: 30, internal: 40.3, resistance: 5238 },
   ],
   A4: [{ from: "A4", to: "A4", ambient: 40, internal: 40.3, resistance: 5238 }],
   C4: [{ from: "C4", to: "C4", ambient: 40, internal: 40.3, resistance: 5238 }],
   E4: [{ from: "E4", to: "E4", ambient: 40, internal: 40.3, resistance: 5238 }],
   E7: [
     { from: "E7", to: "E6", ambient: 40.3, internal: 40.3, resistance: 5238 },
-    { from: "E6", to: "alpha4", ambient: 30, internal: 40.3, resistance: 5238 }
+    { from: "E6", to: "alpha4", ambient: 30, internal: 40.3, resistance: 5238 },
   ],
   C7: [
     { from: "C7", to: "C6", ambient: 40.3, internal: 40.3, resistance: 5238 },
-    { from: "C6", to: "C6", ambient: 35.3, internal: 40.3, resistance: 5238 }
+    { from: "C6", to: "C6", ambient: 35.3, internal: 40.3, resistance: 5238 },
   ],
   A7: [
     { from: "A7", to: "A6", ambient: 40.3, internal: 40.3, resistance: 5238 },
-    { from: "A6", to: "alpha1", ambient: 30, internal: 40.3, resistance: 5238 }
-  ]
+    { from: "A6", to: "alpha1", ambient: 30, internal: 40.3, resistance: 5238 },
+  ],
 };
 
 function App() {
@@ -63,6 +63,9 @@ function App() {
 
   const [lastMove, setLastMove] = useState(null);
 
+  // Automate ref to trigger Grid automation
+  const automateRef = useRef(null);
+
   return (
     <div className="app-root">
       <video className="bg-video" autoPlay loop muted playsInline>
@@ -73,7 +76,7 @@ function App() {
 
       <div className="container">
         <div className="left">
-          <OtherButtons setClockState={setClockState} setModal={setModal} />
+          <OtherButtons setModal={setModal} automateRef={automateRef} />
           <TemperatureReadings value={ambientTemp} />
           <CalculationPanel clockState={clockState} lastMove={lastMove} />
         </div>
@@ -98,7 +101,6 @@ function App() {
                   internalTemperature: step.internal,
                   internalResistance: step.resistance
                 };
-
                 return {
                   ...prev,
                   birds,
@@ -111,8 +113,9 @@ function App() {
               setResistance(step.resistance);
             }}
             onNodeColorChange={(color) => {
-              setResistanceColor(color); // live color from Grid
+              setResistanceColor(color);
             }}
+            automateRef={automateRef}
           />
         </div>
 
@@ -120,7 +123,7 @@ function App() {
           <Clock clockState={clockState} />
           <ResistanceReadings
             value={resistance}
-            color={resistanceColor} // use live color
+            color={resistanceColor}
           />
         </div>
       </div>
