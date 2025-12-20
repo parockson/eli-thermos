@@ -12,17 +12,7 @@ export default function OtherButtons({ setModal }) {
         Quiz
       </button>
 
-      <button
-        onClick={() =>
-          setModal({
-            open: true,
-            title: "Guide",
-            content: "Dummy guide description goes here."
-          })
-        }
-      >
-        Guide
-      </button>
+      
 
       <button
   onClick={() =>

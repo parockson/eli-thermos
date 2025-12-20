@@ -2,7 +2,7 @@ export default function CalculationPanel({ clockState, lastMove }) {
   if (!lastMove) {
     return (
       <div className="card">
-        <h2>Calculations</h2>
+        <h2>AI Concepts</h2>
         <p>No movement yet</p>
       </div>
     );
@@ -18,7 +18,7 @@ export default function CalculationPanel({ clockState, lastMove }) {
 
   return (
     <div className="card">
-      <h3>Calculations</h3>
+      <h3>AI Concepts</h3>
       <p><strong>Node:</strong> {fromLabel} → {toLabel}</p>
       <p><strong>Coordinates:</strong> ({fromPos.x.toFixed(2)}, {fromPos.y.toFixed(2)}) to ({toPos.x.toFixed(2)}, {toPos.y.toFixed(2)})</p>
 

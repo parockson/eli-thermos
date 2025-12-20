@@ -23,7 +23,9 @@ export default function TemperatureReadings({ value }) {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        padding: "20px"
+        padding: "0px",
+        backgroundColor: "#fff",
+        fontSize: "14px",
       }}
     >
       <h5>Ambient Temperature</h5>
@@ -33,7 +35,7 @@ export default function TemperatureReadings({ value }) {
         style={{
           position: "relative",
           width: "4px",
-          height: "150px",
+          height: "100px",
           background: "#eee",
           borderRadius: "20px",
           border: "2px solid #555",
@@ -71,8 +73,8 @@ export default function TemperatureReadings({ value }) {
       {/* Temperature Value */}
       <div
         style={{
-          marginTop: "30px",
-          fontSize: "20px",
+          marginTop: "10px",
+          fontSize: "10px",
           fontWeight: "bold"
         }}
       >
