@@ -269,8 +269,75 @@ export default function Grid({ width = 430, height = 550, onBirdMove, onNodeColo
     }
   };
 
-  // Attach automation to ref
-  if (automateRef) automateRef.current = runAutomation;
+  
+  
+  // seasonal moves
+  const seasonTargets = {
+  season1: {
+    A1: "alpha2",
+    C1: "C2",
+    E1: "alpha3",
+    A7: "alpha1",
+    E7: "alpha4",
+    C7: "C6"
+  },
+  season2: {
+    A1: "A2",
+    C1: "C2",
+    E1: "E2",
+    A7: "A6",
+    C7: "C6",
+    E7: "E6"
+  },
+  season3: {
+    A1: "A1",
+    C1: "C1",
+    E1: "E1",
+    A7: "A7",
+    C7: "C7",
+    E7: "E7"
+  }
+};
+
+
+const runSeason = (seasonKey) => {
+  const targets = seasonTargets[seasonKey];
+  if (!targets) return;
+
+  Object.entries(targets).forEach(([bird, toLabel]) => {
+    const fromLabel = lastNode[bird];
+    const toPos = nodes[toLabel] || alpha[toLabel];
+    const fromPos = nodes[fromLabel] || alpha[fromLabel];
+
+    setBirds(prev => ({ ...prev, [bird]: toPos }));
+    setLastNode(prev => ({ ...prev, [bird]: toLabel }));
+
+    if (onBirdMove) {
+      onBirdMove({
+        bird,
+        fromLabel,
+        toLabel,
+        fromPos,
+        toPos,
+        isDiagonal: toLabel.startsWith("alpha"),
+        distance: Math.hypot(
+          toPos.x - fromPos.x,
+          toPos.y - fromPos.y
+        )
+      });
+    }
+  });
+};
+
+
+// Attach automation to ref
+  if (automateRef) {
+  automateRef.current = {
+    runAutomation,
+    runSeason
+  };
+}
+
 
   // ===============================
   // RENDER
