@@ -80,7 +80,7 @@ function App() {
       <div className="container">
         <div className="left">
           <QuickControls automateRef={automateRef} />
-          <TemperatureReadings value={ambientTemp} />
+          
           <CalculationPanel clockState={clockState} lastMove={lastMove} />
         </div>
 
@@ -128,6 +128,7 @@ function App() {
             value={resistance}
             color={resistanceColor}
           />
+          <TemperatureReadings value={ambientTemp} />
         </div>
       </div>
 
