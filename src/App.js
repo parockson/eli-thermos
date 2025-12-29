@@ -71,12 +71,13 @@ function App() {
       <video className="bg-video" autoPlay loop muted playsInline>
         <source src="/bg-bird.mp4" type="video/mp4" />
       </video>
+      <div>
+        <OtherButtons setModal={setModal} automateRef={automateRef} />
+      </div>
 
-      <Taskbar />
 
       <div className="container">
         <div className="left">
-          <OtherButtons setModal={setModal} automateRef={automateRef} />
           <TemperatureReadings value={ambientTemp} />
           <CalculationPanel clockState={clockState} lastMove={lastMove} />
         </div>

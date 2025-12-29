@@ -1,10 +1,12 @@
 .buttons-container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); // 3 buttons per row
-  gap: 8px;
+  // display: grid;
+  // grid-template-columns: repeat(3, 1fr); // 3 buttons per row
+  // gap: 8px;
+  display: flex;
+  justify-content: space-around;
+  // text-align: center;
   padding: 8px;
-  width: 100%; // ensure they stay inside the container
-  max-width: 250px; // optional: cap max width
+  width: 100vw ;
 
   button {
     padding: 10px 16px; // slightly smaller
