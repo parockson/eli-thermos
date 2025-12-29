@@ -7,6 +7,7 @@ import Grid from "./components/Grid";
 import TemperatureReadings from "./components/TemperatureReadings";
 import ResistanceReadings from "./components/ResistanceReadings";
 import Modal from "./components/Modal";
+import QuickControls from "./components/QuickControls";
 import "./index.scss";
 
 const birdLabels = ["A1", "C1", "E1", "A4", "C4", "E4", "E7", "C7", "A7"];
@@ -77,7 +78,8 @@ function App() {
       <div className="container">
         <div className="left">
           <OtherButtons setModal={setModal} automateRef={automateRef} />
-          <TemperatureReadings value={ambientTemp} />
+          <QuickControls automateRef={automateRef} />
+          
           <CalculationPanel clockState={clockState} lastMove={lastMove} />
         </div>
 
@@ -125,6 +127,7 @@ function App() {
             value={resistance}
             color={resistanceColor}
           />
+          <TemperatureReadings value={ambientTemp} />
         </div>
       </div>
 
