@@ -10,7 +10,7 @@ function QuickControls({ automateRef }) {
         marginBottom: "12px"
       }}
     >
-      <div style={{ marginBottom: "8px", fontWeight: 600 }}>
+      <div style={{ marginBottom: "9px", fontWeight: 600 }}>
         Quick Controls
       </div>
 
