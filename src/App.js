@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-import Taskbar from "./components/Taskbar";
 import OtherButtons from "./components/OtherButtons";
 import Clock from "./components/Clock";
 import CalculationPanel from "./components/CalculationPanel";
@@ -128,6 +127,7 @@ function App() {
             value={resistance}
             color={resistanceColor}
           />
+          <TemperatureReadings value={ambientTemp} />
           <TemperatureReadings value={ambientTemp} />
         </div>
       </div>
