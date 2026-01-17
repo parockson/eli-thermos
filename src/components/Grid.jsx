@@ -11,9 +11,9 @@ export const nodes = {};
 
 columns.forEach((col, colIdx) => {
   rows.forEach((row, rowIdx) => {
-    nodes[`${col}${row}`] = { 
-      x: (colIdx + 1) * 70, 
-      y: (rowIdx + 1) * 70 
+    nodes[`${col}${row}`] = {
+      x: (colIdx + 1) * 70,
+      y: (rowIdx + 1) * 70
     };
   });
 });
@@ -43,17 +43,16 @@ const COLOR_DEEP_GREEN = "#1F6F43";  // Convergence
 const COLOR_PALE_GREEN = "#9AD3A6";  // Default
 
 const dispersalNodes = [
-  "A1","B1","C1","D1","E1",
-  "A7","B7","C7","D7","E7"
+  "A1", "B1", "C1", "D1", "E1",
+  "A7", "B7", "C7", "D7", "E7"
 ];
 
 const convergenceNodes = [
-  "alpha1","alpha2","alpha3","alpha4",
-  "B3","B4","D3","B5","D4","D5",
-  "C2","C3","C4","C5","C6"
+  "alpha1", "alpha2", "alpha3", "alpha4",
+  "B3", "B4", "D3", "B5", "D4", "D5",
+  "C2", "C3", "C4", "C5", "C6"
 ];
 
-// 🔒 Dispersal nodes are immutable
 function enforceDispersal(colors) {
   const next = { ...colors };
   dispersalNodes.forEach(n => {
@@ -94,7 +93,7 @@ const initialLastNodes = Object.fromEntries(
 // COMPONENT
 // ===============================
 
-export default function Grid({ width = 430, height = 550, onBirdMove, onNodeColorChange }) {
+export default function Grid({ width = 430, height = 550, onBirdMove, onNodeColorChange, automateRef }) {
   const [birds, setBirds] = useState(initialBirdPositions);
   const [lastNode, setLastNode] = useState(initialLastNodes);
   const [dragging, setDragging] = useState(null);
@@ -110,22 +109,26 @@ export default function Grid({ width = 430, height = 550, onBirdMove, onNodeColo
     return enforceDispersal(c);
   });
 
+  // ===============================
+  // FLAPPING EFFECT
+  // ===============================
   useEffect(() => {
     if (!dragging) return setFlapFrame(0);
     const i = setInterval(() => setFlapFrame(f => (f + 1) % 2), 150);
     return () => clearInterval(i);
   }, [dragging]);
 
-  // Compute selected bird color dynamically
   const selectedBirdColor = selectedBird ? nodeColors[lastNode[selectedBird]] : null;
 
-  // Notify parent of selected bird's color (optional)
   useEffect(() => {
     if (onNodeColorChange && selectedBird) {
       onNodeColorChange(selectedBirdColor);
     }
   }, [selectedBirdColor, selectedBird, onNodeColorChange]);
 
+  // ===============================
+  // DRAG FUNCTIONS
+  // ===============================
   function onMouseDown(label, e) {
     e.preventDefault();
     if (birdMovements[label].length <= 1) return;
@@ -194,13 +197,151 @@ export default function Grid({ width = 430, height = 550, onBirdMove, onNodeColo
     setBirds(p => ({ ...p, [bird]: best }));
     setLastNode(p => ({ ...p, [bird]: toLabel }));
     setDragging(null);
-    setSelectedBird(bird); // keep selected bird
+    setSelectedBird(bird);
   }
 
-  const birdImg = dragging
-    ? flapFrame === 0 ? "/birds/bird-flap1.png" : "/birds/bird-flap2.png"
-    : "/birds/bird-normal.png";
+  // ===============================
+  // AUTOMATION
+  // ===============================
+  const automationSequence = [
+    { bird: "A1", from: "A1", to: "A2" },
+    { bird: "C1", from: "C1", to: "C2" },
+    { bird: "E1", from: "E1", to: "E2" },
+    { bird: "E7", from: "E7", to: "E6" },
+    { bird: "C7", from: "C7", to: "C6" },
+    { bird: "A7", from: "A7", to: "A6" },
+    { bird: "A1", from: "A2", to: "alpha2" },
+    { bird: "E1", from: "E2", to: "alpha3" },
+    { bird: "E7", from: "E6", to: "alpha4" },
+    { bird: "A7", from: "A6", to: "alpha1" }
+  ];
 
+  const runAutomation = async () => {
+    for (let i = 0; i < automationSequence.length; i++) {
+      const { bird, to } = automationSequence[i];
+      const from = lastNode[bird];
+      const pos = nodes[to] || alpha[to];
+
+      setBirds(prev => ({ ...prev, [bird]: pos }));
+      setLastNode(prev => ({ ...prev, [bird]: to }));
+
+      if (onBirdMove) {
+        const f = nodes[from] || alpha[from];
+        const t = nodes[to] || alpha[to];
+        onBirdMove({
+          bird,
+          fromLabel: from,
+          toLabel: to,
+          fromPos: f,
+          toPos: t,
+          isDiagonal: to.startsWith("alpha"),
+          distance: Math.hypot(t.x - f.x, t.y - f.y)
+        });
+      }
+
+      await new Promise(r => setTimeout(r, 10000));
+    }
+
+    // Reverse automation
+    for (let i = automationSequence.length - 1; i >= 0; i--) {
+      const { bird, from } = automationSequence[i];
+      const to = lastNode[bird] === from ? from : lastNode[bird];
+      const pos = nodes[from] || alpha[from];
+
+      setBirds(prev => ({ ...prev, [bird]: pos }));
+      setLastNode(prev => ({ ...prev, [bird]: from }));
+
+      if (onBirdMove) {
+        const f = nodes[to] || alpha[to];
+        const t = nodes[from] || alpha[from];
+        onBirdMove({
+          bird,
+          fromLabel: to,
+          toLabel: from,
+          fromPos: f,
+          toPos: t,
+          isDiagonal: from.startsWith("alpha"),
+          distance: Math.hypot(t.x - f.x, t.y - f.y)
+        });
+      }
+
+      await new Promise(r => setTimeout(r, 10000));
+    }
+  };
+
+  
+  
+  // seasonal moves
+  const seasonTargets = {
+  season1: {
+    A1: "alpha2",
+    C1: "C2",
+    E1: "alpha3",
+    A7: "alpha1",
+    E7: "alpha4",
+    C7: "C6"
+  },
+  season2: {
+    A1: "A2",
+    C1: "C2",
+    E1: "E2",
+    A7: "A6",
+    C7: "C6",
+    E7: "E6"
+  },
+  season3: {
+    A1: "A1",
+    C1: "C1",
+    E1: "E1",
+    A7: "A7",
+    C7: "C7",
+    E7: "E7"
+  }
+};
+
+
+const runSeason = (seasonKey) => {
+  const targets = seasonTargets[seasonKey];
+  if (!targets) return;
+
+  Object.entries(targets).forEach(([bird, toLabel]) => {
+    const fromLabel = lastNode[bird];
+    const toPos = nodes[toLabel] || alpha[toLabel];
+    const fromPos = nodes[fromLabel] || alpha[fromLabel];
+
+    setBirds(prev => ({ ...prev, [bird]: toPos }));
+    setLastNode(prev => ({ ...prev, [bird]: toLabel }));
+
+    if (onBirdMove) {
+      onBirdMove({
+        bird,
+        fromLabel,
+        toLabel,
+        fromPos,
+        toPos,
+        isDiagonal: toLabel.startsWith("alpha"),
+        distance: Math.hypot(
+          toPos.x - fromPos.x,
+          toPos.y - fromPos.y
+        )
+      });
+    }
+  });
+};
+
+
+// Attach automation to ref
+  if (automateRef) {
+  automateRef.current = {
+    runAutomation,
+    runSeason
+  };
+}
+
+
+  // ===============================
+  // RENDER
+  // ===============================
   return (
     <svg
       width={width}
@@ -208,7 +349,6 @@ export default function Grid({ width = 430, height = 550, onBirdMove, onNodeColo
       onMouseMove={onMouseMove}
       onMouseUp={onMouseUp}
       onMouseLeave={onMouseUp}
-      style={{ background: "#fafafa", border: "1px solid #ccc" }}
     >
       {/* BACKGROUND SHAPES */}
       <polygon
@@ -229,7 +369,7 @@ export default function Grid({ width = 430, height = 550, onBirdMove, onNodeColo
       <line x1={diag1[0].x} y1={diag1[0].y} x2={diag1[1].x} y2={diag1[1].y} stroke="purple" strokeWidth="2" opacity="0.5" />
       <line x1={diag2[0].x} y1={diag2[0].y} x2={diag2[1].x} y2={diag2[1].y} stroke="purple" strokeWidth="2" opacity="0.5" />
 
-      {/* NODES + LABELS */}
+      {/* NODES */}
       {Object.entries(nodes).map(([l, p]) => (
         <g key={l} style={{ pointerEvents: "none" }}>
           <circle cx={p.x} cy={p.y} r={4} fill={nodeColors[l]} stroke="black" />
@@ -245,18 +385,30 @@ export default function Grid({ width = 430, height = 550, onBirdMove, onNodeColo
       ))}
 
       {/* BIRDS */}
-      {Object.entries(birds).map(([l, p]) => (
-        <image
-          key={l}
-          href={birdImg}
-          x={p.x - 50}
-          y={p.y - 50}
-          width={100}
-          height={100}
-          onMouseDown={(e) => onMouseDown(l, e)}
-          style={{ cursor: "grab" }}
-        />
-      ))}
+      {Object.entries(birds).map(([l, p]) => {
+        const BIRD_SIZE = 150;
+        const HALF_BIRD = BIRD_SIZE / 2;
+        const isFlapping = dragging === l;
+
+        const birdImg = isFlapping
+          ? flapFrame === 0
+            ? "/birds/bird-flap1.png"
+            : "/birds/bird-flap2.png"
+          : "/birds/bird-normal.png";
+
+        return (
+          <image
+            key={l}
+            href={birdImg}
+            x={p.x - HALF_BIRD}
+            y={p.y - HALF_BIRD}
+            width={BIRD_SIZE}
+            height={BIRD_SIZE}
+            onMouseDown={(e) => onMouseDown(l, e)}
+            style={{ cursor: "grab" }}
+          />
+        );
+      })}
     </svg>
   );
 }
