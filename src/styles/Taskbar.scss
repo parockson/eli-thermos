@@ -1,0 +1,31 @@
+.taskbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: #f3f4f6;
+  border-bottom: 1px solid #ccc;
+}
+
+.taskbar-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-right: 20px;
+}
+
+.taskbar-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.taskbar button {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  background: white;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.taskbar button:hover {
+  background: #e5e7eb;
+}

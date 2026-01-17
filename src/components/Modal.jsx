@@ -1,4 +1,3 @@
-// Modal.jsx
 import React from "react";
 import "../styles/Modal.scss";
 
@@ -7,9 +6,17 @@ export default function Modal({ isOpen, onClose, title, content }) {
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal-window" onClick={e => e.stopPropagation()}>
+      <div
+        className="modal-window"
+        onClick={(e) => e.stopPropagation()}
+      >
         <h2>{title}</h2>
-        <p>{content}</p>
+
+        {/* IMPORTANT FIX */}
+        <div className="modal-content">
+          {typeof content === "string" ? <p>{content}</p> : content}
+        </div>
+
         <button onClick={onClose}>Close</button>
       </div>
     </div>

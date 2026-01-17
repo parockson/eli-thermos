@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Taskbar from "./components/Taskbar";
-import OtherButtons from "./components/OtherButtons";
 import Clock from "./components/Clock";
 import CalculationPanel from "./components/CalculationPanel";
 import Grid from "./components/Grid";
@@ -53,7 +52,7 @@ function App() {
 
   const [ambientTemp, setAmbientTemp] = useState(null);
   const [resistance, setResistance] = useState(null);
-  const [resistanceColor, setResistanceColor] = useState("#9AD3A6"); // default pale green
+  const [resistanceColor, setResistanceColor] = useState("#9AD3A6");
 
   const [modal, setModal] = useState({
     open: false,
@@ -69,13 +68,15 @@ function App() {
         <source src="/bg-bird.mp4" type="video/mp4" />
       </video>
 
-      <Taskbar />
+      {/* TASKBAR WITH ALL BUTTONS */}
+      <Taskbar setModal={setModal} />
 
       <div className="container">
         <div className="left">
-          <OtherButtons setClockState={setClockState} setModal={setModal} />
-          <Clock clockState={clockState} />
-          <CalculationPanel clockState={clockState} lastMove={lastMove} />
+          {/* <CalculationPanel
+            clockState={clockState}
+            lastMove={lastMove}
+          /> */}
         </div>
 
         <div className="center">
@@ -111,7 +112,7 @@ function App() {
               setResistance(step.resistance);
             }}
             onNodeColorChange={(color) => {
-              setResistanceColor(color); // live color from Grid
+              setResistanceColor(color);
             }}
           />
         </div>
@@ -120,11 +121,17 @@ function App() {
           <TemperatureReadings value={ambientTemp} />
           <ResistanceReadings
             value={resistance}
-            color={resistanceColor} // use live color
+            color={resistanceColor}
+          />
+          <Clock clockState={clockState} />
+          <CalculationPanel
+            clockState={clockState}
+            lastMove={lastMove}
           />
         </div>
       </div>
 
+      {/* MODAL */}
       <Modal
         isOpen={modal.open}
         title={modal.title}
