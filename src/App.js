@@ -7,8 +7,11 @@ import TemperatureReadings from "./components/TemperatureReadings";
 import ResistanceReadings from "./components/ResistanceReadings";
 import Modal from "./components/Modal";
 import "./index.scss";
+import Quiz from "./components/Quiz";
+// import Branch from "./components/Branch";
+import QuickControls from "./components/QuickControls";
 
-const birdLabels = ["A1","C1","E1","A4","C4","E4","E7","C7","A7"];
+const birdLabels = ["A1", "C1", "E1", "A4", "C4", "E4", "E7", "C7", "A7"];
 
 const birdTemperatureTable = {
   A1: [
@@ -73,10 +76,9 @@ function App() {
 
       <div className="container">
         <div className="left">
-          <CalculationPanel
-            clockState={clockState}
-            lastMove={lastMove}
-          />
+          <QuickControls />
+          {/* <Branch /> */}
+          <Quiz />
         </div>
 
         <div className="center">
@@ -118,13 +120,31 @@ function App() {
         </div>
 
         <div className="right">
-          <TemperatureReadings value={ambientTemp} />
-          <ResistanceReadings
-            value={resistance}
-            color={resistanceColor}
-          />
-          <Clock clockState={clockState} />
+
+          {/* SECTION 1: Resistance */}
+          <div className="right-section">
+            <ResistanceReadings
+              value={resistance}
+              color={resistanceColor}
+            />
+          </div>
+
+          {/* SECTION 2: Clock + Ambient Temp */}
+          <div className="right-section">
+            <Clock clockState={clockState} />
+            <TemperatureReadings value={ambientTemp} />
+          </div>
+
+          {/* SECTION 3: Calculations */}
+          <div className="right-section">
+            <CalculationPanel
+              clockState={clockState}
+              lastMove={lastMove}
+            />
+          </div>
+
         </div>
+
       </div>
 
       {/* MODAL */}

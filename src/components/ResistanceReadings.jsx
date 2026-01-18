@@ -16,7 +16,8 @@ export default function ResistanceReadings({ value, color }) {
         transition: "background-color 0.5s ease",
         padding: "10px",
         borderRadius: "8px",
-        color: "#000"
+        color: "#000",
+        height: "4%"
       }}
     >
       <h5>Color Code</h5>

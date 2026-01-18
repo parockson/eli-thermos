@@ -21,10 +21,10 @@ export default function CalculationPanel({ clockState, lastMove }) {
 
       <div className="panel-row">
         <p className="panel-text"><strong>Node:</strong> {fromLabel} → {toLabel}</p>
-        <p className="panel-text"><strong>Coords:</strong> ({fromPos.x}, {fromPos.y}) to ({toPos.x}, {toPos.y})</p>
+        {/* <p className="panel-text"><strong>Coords:</strong> ({fromPos.x}, {fromPos.y}) to ({toPos.x}, {toPos.y})</p> */}
       </div>
 
-      <div className="panel-row">
+      {/* <div className="panel-row">
         <p className="panel-text"><strong>Movement:</strong> {isDiagonal ? "Diagonal" : "Vertical"}</p>
         <p className="panel-text"><strong>Type:</strong> {distanceType}</p>
       </div>
@@ -35,7 +35,7 @@ export default function CalculationPanel({ clockState, lastMove }) {
         </p>
 
         <code className="formula-text">{distanceFormula}= {distance.toFixed(2)}</code>
-      </div>
+      </div> */}
     </div>
   );
 }
