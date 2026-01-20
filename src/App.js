@@ -1,17 +1,15 @@
 import { useState } from "react";
 import Taskbar from "./components/Taskbar";
 import Clock from "./components/Clock";
-import CalculationPanel from "./components/CalculationPanel";
 import Grid from "./components/Grid";
 import TemperatureReadings from "./components/TemperatureReadings";
 import ResistanceReadings from "./components/ResistanceReadings";
 import Modal from "./components/Modal";
-import "./index.scss";
 import Quiz from "./components/Quiz";
-// import Branch from "./components/Branch";
 import QuickControls from "./components/QuickControls";
+import "./index.scss";
 
-const birdLabels = ["A1", "C1", "E1", "A4", "C4", "E4", "E7", "C7", "A7"];
+const birdLabels = ["A1","C1","E1","A4","C4","E4","E7","C7","A7"];
 
 const birdTemperatureTable = {
   A1: [
@@ -19,8 +17,7 @@ const birdTemperatureTable = {
     { from: "A2", to: "alpha2", ambient: 30, internal: 40.3, resistance: 5238 }
   ],
   C1: [
-    { from: "C1", to: "C2", ambient: 40.3, internal: 40.3, resistance: 5238 },
-    { from: "C2", to: "C2", ambient: 35.3, internal: 40.3, resistance: 5238 }
+    { from: "C1", to: "C2", ambient: 40.3, internal: 40.3, resistance: 5238 }
   ],
   E1: [
     { from: "E1", to: "E2", ambient: 40.3, internal: 40.3, resistance: 5238 },
@@ -34,8 +31,7 @@ const birdTemperatureTable = {
     { from: "E6", to: "alpha4", ambient: 30, internal: 40.3, resistance: 5238 }
   ],
   C7: [
-    { from: "C7", to: "C6", ambient: 40.3, internal: 40.3, resistance: 5238 },
-    { from: "C6", to: "C6", ambient: 35.3, internal: 40.3, resistance: 5238 }
+    { from: "C7", to: "C6", ambient: 40.3, internal: 40.3, resistance: 5238 }
   ],
   A7: [
     { from: "A7", to: "A6", ambient: 40.3, internal: 40.3, resistance: 5238 },
@@ -43,27 +39,18 @@ const birdTemperatureTable = {
   ]
 };
 
-function App() {
-  const [clockState, setClockState] = useState({
-    birds: Array(9).fill().map(() => ({
-      internalTemperature: null,
-      internalResistance: null
-    })),
-    timeIndex: 0,
-    event: null
-  });
-
+export default function App() {
+  const [activeSeason, setActiveSeason] = useState(null);
   const [ambientTemp, setAmbientTemp] = useState(null);
   const [resistance, setResistance] = useState(null);
   const [resistanceColor, setResistanceColor] = useState("#9AD3A6");
+  const [modal, setModal] = useState({ open: false, title: "", content: "" });
 
-  const [modal, setModal] = useState({
-    open: false,
-    title: "",
-    content: ""
+  const [clockState, setClockState] = useState({
+    birds: Array(9).fill().map(() => ({ internalTemperature: null, internalResistance: null })),
+    timeIndex: 0,
+    event: null
   });
-
-  const [lastMove, setLastMove] = useState(null);
 
   return (
     <div className="app-root">
@@ -71,29 +58,24 @@ function App() {
         <source src="/bg-bird.mp4" type="video/mp4" />
       </video>
 
-      {/* TASKBAR WITH ALL BUTTONS */}
       <Taskbar setModal={setModal} />
 
       <div className="container">
         <div className="left">
-          <QuickControls />
-          {/* <Branch /> */}
+          <QuickControls setActiveSeason={setActiveSeason} />
           <Quiz />
         </div>
 
         <div className="center">
           <Grid
+            activeSeason={activeSeason}
             onBirdMove={(move) => {
-              setLastMove(move);
-
               const birdIndex = birdLabels.indexOf(move.bird);
               if (birdIndex === -1) return;
 
               const steps = birdTemperatureTable[move.bird];
               const step =
-                steps.find(
-                  s => s.from === move.fromLabel && s.to === move.toLabel
-                ) || steps[0];
+                steps.find(s => s.from === move.fromLabel && s.to === move.toLabel) || steps[0];
 
               setClockState(prev => {
                 const birds = [...prev.birds];
@@ -101,63 +83,29 @@ function App() {
                   internalTemperature: step.internal,
                   internalResistance: step.resistance
                 };
-
-                return {
-                  ...prev,
-                  birds,
-                  timeIndex: birdIndex,
-                  event: move
-                };
+                return { ...prev, birds, timeIndex: birdIndex, event: move };
               });
 
               setAmbientTemp(step.ambient);
               setResistance(step.resistance);
             }}
-            onNodeColorChange={(color) => {
-              setResistanceColor(color);
-            }}
+            onNodeColorChange={setResistanceColor}
           />
         </div>
 
         <div className="right">
-
-          {/* SECTION 1: Resistance */}
-          <div className="right-section">
-            <ResistanceReadings
-              value={resistance}
-              color={resistanceColor}
-            />
-          </div>
-
-          {/* SECTION 2: Clock + Ambient Temp */}
-          <div className="right-section">
-            <Clock clockState={clockState} />
-            <TemperatureReadings value={ambientTemp} />
-          </div>
-
-          {/* SECTION 3: Calculations */}
-          <div className="right-section">
-            <CalculationPanel
-              clockState={clockState}
-              lastMove={lastMove}
-            />
-          </div>
-
+          <ResistanceReadings value={resistance} color={resistanceColor} />
+          <Clock clockState={clockState} />
+          <TemperatureReadings value={ambientTemp} />
         </div>
-
       </div>
 
-      {/* MODAL */}
       <Modal
         isOpen={modal.open}
         title={modal.title}
         content={modal.content}
-        onClose={() =>
-          setModal({ open: false, title: "", content: "" })
-        }
+        onClose={() => setModal({ open: false, title: "", content: "" })}
       />
     </div>
   );
 }
-
-export default App;
