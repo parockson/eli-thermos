@@ -5,6 +5,7 @@ import Grid from "./components/Grid";
 import TemperatureReadings from "./components/TemperatureReadings";
 import ResistanceReadings from "./components/ResistanceReadings";
 import Modal from "./components/Modal";
+import QuickModal from "./components/QuickModal";
 import Quiz from "./components/Quiz";
 import QuickControls from "./components/QuickControls";
 import "./index.scss";
@@ -41,16 +42,55 @@ const birdTemperatureTable = {
 
 export default function App() {
   const [activeSeason, setActiveSeason] = useState(null);
+
   const [ambientTemp, setAmbientTemp] = useState(null);
   const [resistance, setResistance] = useState(null);
   const [resistanceColor, setResistanceColor] = useState("#9AD3A6");
+
   const [modal, setModal] = useState({ open: false, title: "", content: "" });
 
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pendingSeason, setPendingSeason] = useState(null);
+
   const [clockState, setClockState] = useState({
-    birds: Array(9).fill().map(() => ({ internalTemperature: null, internalResistance: null })),
+    birds: Array(9).fill().map(() => ({
+      internalTemperature: null,
+      internalResistance: null
+    })),
     timeIndex: 0,
     event: null
   });
+
+  // ─────────────────────────────
+  // Season selection handler
+  // ─────────────────────────────
+  const handleSeasonSelect = (season) => {
+    if (activeSeason && activeSeason !== season) {
+      setPendingSeason(season);
+      setConfirmOpen(true);
+    } else {
+      setActiveSeason(season);
+    }
+  };
+
+  const confirmSeasonChange = () => {
+    setActiveSeason(pendingSeason);
+    setPendingSeason(null);
+    setConfirmOpen(false);
+
+    // RESET birds & readings
+    setClockState({
+      birds: Array(9).fill().map(() => ({
+        internalTemperature: null,
+        internalResistance: null
+      })),
+      timeIndex: 0,
+      event: null
+    });
+
+    setAmbientTemp(null);
+    setResistance(null);
+  };
 
   return (
     <div className="app-root">
@@ -62,12 +102,16 @@ export default function App() {
 
       <div className="container">
         <div className="left">
-          <QuickControls setActiveSeason={setActiveSeason} />
+          <QuickControls
+            activeSeason={activeSeason}
+            onSelectSeason={handleSeasonSelect}
+          />
           <Quiz />
         </div>
 
         <div className="center">
           <Grid
+            key={activeSeason}   // forces reset on season change
             activeSeason={activeSeason}
             onBirdMove={(move) => {
               const birdIndex = birdLabels.indexOf(move.bird);
@@ -75,7 +119,11 @@ export default function App() {
 
               const steps = birdTemperatureTable[move.bird];
               const step =
-                steps.find(s => s.from === move.fromLabel && s.to === move.toLabel) || steps[0];
+                steps.find(
+                  s =>
+                    s.from === move.fromLabel &&
+                    s.to === move.toLabel
+                ) || steps[0];
 
               setClockState(prev => {
                 const birds = [...prev.birds];
@@ -83,7 +131,12 @@ export default function App() {
                   internalTemperature: step.internal,
                   internalResistance: step.resistance
                 };
-                return { ...prev, birds, timeIndex: birdIndex, event: move };
+                return {
+                  ...prev,
+                  birds,
+                  timeIndex: birdIndex,
+                  event: move
+                };
               });
 
               setAmbientTemp(step.ambient);
@@ -100,11 +153,26 @@ export default function App() {
         </div>
       </div>
 
+      {/* Existing informational modal */}
       <Modal
         isOpen={modal.open}
         title={modal.title}
         content={modal.content}
-        onClose={() => setModal({ open: false, title: "", content: "" })}
+        onClose={() =>
+          setModal({ open: false, title: "", content: "" })
+        }
+      />
+
+      {/* Quick confirm modal */}
+      <QuickModal
+        open={confirmOpen}
+        title="Change Season?"
+        message="Continuing will reset the positions of all birds. Do you want to proceed?"
+        onYes={confirmSeasonChange}
+        onNo={() => {
+          setPendingSeason(null);
+          setConfirmOpen(false);
+        }}
       />
     </div>
   );

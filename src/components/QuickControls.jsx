@@ -1,19 +1,32 @@
-function QuickControls({ setActiveSeason }) {
+import "../styles/QuickControls.scss";
+
+function QuickControls({ activeSeason, onSelectSeason }) {
   return (
-    <div className="quick-controls" style={{ background: "#fff", padding: 12, borderRadius: 6 }}>
-      <div style={{ marginBottom: 8, fontWeight: 600 }}>Quick Controls</div>
+    <div className="quick-controls">
+      <div className="qc-title">Quick Controls</div>
 
-      <button onClick={() => setActiveSeason("season1")}>
-        Season 1 (Oct–Mar)
-      </button>
+      <div className="qc-buttons">
+        <button
+          className={activeSeason === "season1" ? "active" : ""}
+          onClick={() => onSelectSeason("season1")}
+        >
+          Season 1 (Oct–Mar)
+        </button>
 
-      <button onClick={() => setActiveSeason("season2")}>
-        Season 2 (Apr–Jun)
-      </button>
+        <button
+          className={activeSeason === "season2" ? "active" : ""}
+          onClick={() => onSelectSeason("season2")}
+        >
+          Season 2 (Apr–Jun)
+        </button>
 
-      <button onClick={() => setActiveSeason("season3")}>
-        Season 3 (Jul–Sep)
-      </button>
+        <button
+          className={activeSeason === "season3" ? "active" : ""}
+          onClick={() => onSelectSeason("season3")}
+        >
+          Season 3 (Jul–Sep)
+        </button>
+      </div>
     </div>
   );
 }

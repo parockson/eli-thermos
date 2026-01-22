@@ -1,0 +1,39 @@
+.quick-controls {
+  background: #fff;
+  padding: 12px;
+  border-radius: 6px;
+  width: 100%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.qc-title {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.qc-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.qc-buttons button {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  background: #e5e7eb;  // default grey
+  color: #111;
+  transition: all 0.2s ease;
+}
+
+.qc-buttons button:hover {
+  background: #3b82f6;  // blue hover
+  color: #fff;
+}
+
+.qc-buttons button.active {
+  background: #10b981;  // green when active
+  color: #fff;
+}
