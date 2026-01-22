@@ -12,7 +12,10 @@ const rows = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 export const nodes = {};
 columns.forEach((col, colIdx) => {
   rows.forEach((row, rowIdx) => {
-    nodes[`${col}${row}`] = { x: (colIdx + 1) * 60, y: (rowIdx + 1) * 60 };
+    nodes[`${col}${row}`] = {
+      x: (colIdx + 1) * 60,
+      y: (rowIdx + 1) * 60
+    };
   });
 });
 
@@ -29,24 +32,35 @@ const diag1 = [nodes.A2, nodes.E6];
 const diag2 = [nodes.E2, nodes.A6];
 
 // ===============================
-// NODE COLORS (UNCHANGED)
+// NODE COLORS
 // ===============================
 
 const COLOR_PALE_ORANGE = "#F6C28B";
 const COLOR_DEEP_GREEN = "#1F6F43";
 const COLOR_PALE_GREEN = "#9AD3A6";
 
-const dispersalNodes = ["A1","B1","C1","D1","E1","A7","B7","C7","D7","E7"];
+const dispersalNodes = [
+  "A1","B1","C1","D1","E1",
+  "A7","B7","C7","D7","E7"
+];
+
 const convergenceNodes = [
   "alpha1","alpha2","alpha3","alpha4",
   "B3","B4","B5","D3","D4","D5",
   "C2","C3","C4","C5","C6"
 ];
 
-const isXYZ = (label) => /^[WXYZ]/.test(label);
+// ===============================
+// VISIBILITY RULES
+// ===============================
+
+const isXYZW = (label) => /^[WXYZ]/.test(label);
+const endsWith8or9 = (label) => /[89]$/.test(label);
+
+const isInvisibleNode = (label) =>
+  isXYZW(label) || endsWith8or9(label);
 
 const getNodeColor = (label) => {
-  if (isXYZ(label)) return "black";
   if (dispersalNodes.includes(label)) return COLOR_PALE_ORANGE;
   if (convergenceNodes.includes(label)) return COLOR_DEEP_GREEN;
   return COLOR_PALE_GREEN;
@@ -56,13 +70,16 @@ const getNodeColor = (label) => {
 // INITIAL BIRDS
 // ===============================
 
-const initialBirdLabels = ["W1","W2","W3","W4","W5","W6","W7","W8","W9"];
+const initialBirdLabels = [
+  "W1","W2","W3","W4","W5","W6","W7","W8","W9"
+];
+
 const initialBirdPositions = Object.fromEntries(
   initialBirdLabels.map(l => [l, nodes[l]])
 );
 
 // ===============================
-// SEASONAL PATHS (UNCHANGED)
+// SEASONAL PATHS
 // ===============================
 
 export const seasonalPaths = {
@@ -108,9 +125,23 @@ export const seasonalPaths = {
 export default function Grid({ activeSeason, onBirdMove }) {
   const [birds, setBirds] = useState(initialBirdPositions);
   const [movingBird, setMovingBird] = useState(null);
+  const [flapFrame, setFlapFrame] = useState(0);
 
   // ===============================
-  // Smooth movement (UNCHANGED)
+  // Wing flap effect
+  // ===============================
+  useEffect(() => {
+    if (!movingBird) return;
+
+    const interval = setInterval(() => {
+      setFlapFrame(f => (f + 1) % 2);
+    }, 150);
+
+    return () => clearInterval(interval);
+  }, [movingBird]);
+
+  // ===============================
+  // Smooth movement
   // ===============================
   const moveSmooth = async (bird, from, to, steps = 50, stepDelay = 20) => {
     const start = nodes[from] || alpha[from];
@@ -140,10 +171,11 @@ export default function Grid({ activeSeason, onBirdMove }) {
   };
 
   // ===============================
-  // NEW: Release bird from house
+  // Release bird from house
   // ===============================
   const releaseBird = async (houseLabel) => {
     if (!activeSeason || movingBird) return;
+
     const path = seasonalPaths[activeSeason]?.[houseLabel];
     if (!path) return;
 
@@ -157,60 +189,104 @@ export default function Grid({ activeSeason, onBirdMove }) {
   // ===============================
   return (
     <svg width={700} height={550}>
-
       {/* POLYGONS & DIAGONALS */}
       <polygon
         points={`${nodes.A1.x},${nodes.A1.y} ${nodes.E1.x},${nodes.E1.y} ${nodes.E7.x},${nodes.E7.y} ${nodes.A7.x},${nodes.A7.y}`}
-        fill="none" stroke="blue" strokeWidth="2" opacity="0.6"
+        fill="none"
+        stroke="blue"
+        strokeWidth="2"
+        opacity="0.6"
       />
       <polygon
         points={`${nodes.A2.x},${nodes.A2.y} ${nodes.E2.x},${nodes.E2.y} ${nodes.E6.x},${nodes.E6.y} ${nodes.A6.x},${nodes.A6.y}`}
-        fill="none" stroke="orange" strokeWidth="2" opacity="0.6"
+        fill="none"
+        stroke="orange"
+        strokeWidth="2"
+        opacity="0.6"
       />
       <circle
-        cx={center.x} cy={center.y} r={radius}
-        fill="none" stroke="green" strokeWidth="2" opacity="0.6"
+        cx={center.x}
+        cy={center.y}
+        r={radius}
+        fill="none"
+        stroke="green"
+        strokeWidth="2"
+        opacity="0.6"
       />
       <line
-        x1={diag1[0].x} y1={diag1[0].y}
-        x2={diag1[1].x} y2={diag1[1].y}
-        stroke="purple" strokeWidth="2" opacity="0.5"
+        x1={diag1[0].x}
+        y1={diag1[0].y}
+        x2={diag1[1].x}
+        y2={diag1[1].y}
+        stroke="purple"
+        strokeWidth="2"
+        opacity="0.5"
       />
       <line
-        x1={diag2[0].x} y1={diag2[0].y}
-        x2={diag2[1].x} y2={diag2[1].y}
-        stroke="purple" strokeWidth="2" opacity="0.5"
+        x1={diag2[0].x}
+        y1={diag2[0].y}
+        x2={diag2[1].x}
+        y2={diag2[1].y}
+        stroke="purple"
+        strokeWidth="2"
+        opacity="0.5"
       />
 
-      {/* NODES */}
-      {Object.entries(nodes).map(([l, p]) => (
-        <g key={l} style={{ pointerEvents: "none" }}>
-          <circle cx={p.x} cy={p.y} r={4} fill={getNodeColor(l)} stroke="black" />
-          <text x={p.x + 8} y={p.y - 6} fontSize="12">{l}</text>
-        </g>
-      ))}
+      {/* NODES (INVISIBLE: W/X/Y/Z + 8/9) */}
+      {Object.entries(nodes).map(([l, p]) => {
+        if (isInvisibleNode(l)) return null;
+
+        return (
+          <g key={l} style={{ pointerEvents: "none" }}>
+            <circle
+              cx={p.x}
+              cy={p.y}
+              r={4}
+              fill={getNodeColor(l)}
+              stroke="black"
+            />
+            <text x={p.x + 8} y={p.y - 6} fontSize="12">
+              {l}
+            </text>
+          </g>
+        );
+      })}
 
       {/* ALPHA NODES */}
       {Object.entries(alpha).map(([l, p]) => (
         <g key={l} style={{ pointerEvents: "none" }}>
           <circle cx={p.x} cy={p.y} r={3} fill={COLOR_DEEP_GREEN} stroke="black" />
-          <text x={p.x + 6} y={p.y - 6} fontSize="12">{l}</text>
+          <text x={p.x + 6} y={p.y - 6} fontSize="12">
+            {l}
+          </text>
         </g>
       ))}
 
       {/* BIRDS */}
-      {Object.entries(birds).map(([l, p]) => (
-        <image
-          key={l}
-          href="/birds/bird-normal.png"
-          x={p.x - 50}
-          y={p.y - 50}
-          width={100}
-          height={100}
-        />
-      ))}
+      {Object.entries(birds).map(([l, p]) => {
+        const BIRD_SIZE = 100;
+        const HALF = BIRD_SIZE / 2;
 
-      {/* NEW: BIRD HOUSES (ON TOP) */}
+        const isFlapping = movingBird === l;
+        const birdImg = isFlapping
+          ? flapFrame === 0
+            ? "/birds/bird-flap1.png"
+            : "/birds/bird-flap2.png"
+          : "/birds/bird-normal.png";
+
+        return (
+          <image
+            key={l}
+            href={birdImg}
+            x={p.x - HALF}
+            y={p.y - HALF}
+            width={BIRD_SIZE}
+            height={BIRD_SIZE}
+          />
+        );
+      })}
+
+      {/* BIRD HOUSES */}
       {initialBirdLabels.map(l => {
         const p = nodes[l];
         return (
