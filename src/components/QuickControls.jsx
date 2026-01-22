@@ -10,21 +10,21 @@ function QuickControls({ activeSeason, onSelectSeason }) {
           className={activeSeason === "season1" ? "active" : ""}
           onClick={() => onSelectSeason("season1")}
         >
-          Season 1 (Oct–Mar)
+          Winter (Oct–Mar)
         </button>
 
         <button
           className={activeSeason === "season2" ? "active" : ""}
           onClick={() => onSelectSeason("season2")}
         >
-          Season 2 (Apr–Jun)
+          Summer (Apr–Jun)
         </button>
 
         <button
           className={activeSeason === "season3" ? "active" : ""}
           onClick={() => onSelectSeason("season3")}
         >
-          Season 3 (Jul–Sep)
+          Moonsoon (Jul–Sep)
         </button>
       </div>
     </div>
