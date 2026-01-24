@@ -12,10 +12,7 @@ const rows = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 export const nodes = {};
 columns.forEach((col, colIdx) => {
   rows.forEach((row, rowIdx) => {
-    nodes[`${col}${row}`] = {
-      x: (colIdx + 1) * 60,
-      y: (rowIdx + 1) * 60
-    };
+    nodes[`${col}${row}`] = { x: (colIdx + 1) * 60, y: (rowIdx + 1) * 60 };
   });
 });
 
@@ -40,14 +37,14 @@ const COLOR_DEEP_GREEN = "#1F6F43";
 const COLOR_PALE_GREEN = "#9AD3A6";
 
 const dispersalNodes = [
-  "A1","B1","C1","D1","E1",
-  "A7","B7","C7","D7","E7"
+  "A1", "B1", "C1", "D1", "E1",
+  "A7", "B7", "C7", "D7", "E7"
 ];
 
 const convergenceNodes = [
-  "alpha1","alpha2","alpha3","alpha4",
-  "B3","B4","B5","D3","D4","D5",
-  "C2","C3","C4","C5","C6"
+  "alpha1", "alpha2", "alpha3", "alpha4",
+  "B3", "B4", "B5", "D3", "D4", "D5",
+  "C2", "C3", "C4", "C5", "C6"
 ];
 
 // ===============================
@@ -57,8 +54,7 @@ const convergenceNodes = [
 const isXYZW = (label) => /^[WXYZ]/.test(label);
 const endsWith8or9 = (label) => /[89]$/.test(label);
 
-const isInvisibleNode = (label) =>
-  isXYZW(label) || endsWith8or9(label);
+const isInvisibleNode = (label) => isXYZW(label) || endsWith8or9(label);
 
 const getNodeColor = (label) => {
   if (dispersalNodes.includes(label)) return COLOR_PALE_ORANGE;
@@ -71,7 +67,7 @@ const getNodeColor = (label) => {
 // ===============================
 
 const initialBirdLabels = [
-  "W1","W2","W3","W4","W5","W6","W7","W8","W9"
+  "W1", "W2", "W3", "W4", "W5", "W6", "W7", "W8", "W9"
 ];
 
 const initialBirdPositions = Object.fromEntries(
@@ -84,37 +80,16 @@ const initialBirdPositions = Object.fromEntries(
 
 export const seasonalPaths = {
   season1: {
-    W1: ["W1","alpha3"],
-    W2: ["W2","alpha2"],
-    W3: ["W3","C2"],
-    W4: ["W4","E4"],
-    W5: ["W5","C4"],
-    W6: ["W6","A4"],
-    W7: ["W7","alpha4"],
-    W8: ["W8","C6"],
-    W9: ["W9","alpha1"]
+    W1: ["W1", "alpha3"], W2: ["W2", "alpha2"], W3: ["W3", "C2"], W4: ["W4", "E4"], W5: ["W5", "C4"],
+    W6: ["W6", "A4"], W7: ["W7", "alpha4"], W8: ["W8", "C6"], W9: ["W9", "alpha1"]
   },
   season2: {
-    W1: ["W1","E2"],
-    W2: ["W2","C2"],
-    W3: ["W3","A2"],
-    W4: ["W4","E4"],
-    W5: ["W5","C4"],
-    W6: ["W6","A4"],
-    W7: ["W7","E6"],
-    W8: ["W8","C6"],
-    W9: ["W9","A6"]
+    W1: ["W1", "E2"], W2: ["W2", "C2"], W3: ["W3", "A2"], W4: ["W4", "E4"], W5: ["W5", "C4"],
+    W6: ["W6", "A4"], W7: ["W7", "E6"], W8: ["W8", "C6"], W9: ["W9", "A6"]
   },
   season3: {
-    W1: ["W1","E1"],
-    W2: ["W2","C1"],
-    W3: ["W3","A1"],
-    W4: ["W4","E4"],
-    W5: ["W5","C4"],
-    W6: ["W6","A4"],
-    W7: ["W7","E7"],
-    W8: ["W8","C7"],
-    W9: ["W9","A7"]
+    W1: ["W1", "E1"], W2: ["W2", "C1"], W3: ["W3", "A1"], W4: ["W4", "E4"], W5: ["W5", "C4"],
+    W6: ["W6", "A4"], W7: ["W7", "E7"], W8: ["W8", "C7"], W9: ["W9", "A7"]
   }
 };
 
@@ -122,7 +97,7 @@ export const seasonalPaths = {
 // GRID COMPONENT
 // ===============================
 
-export default function Grid({ activeSeason, onBirdMove }) {
+export default function Grid({ activeSeason, onBirdMove, resistanceMap }) {
   const [birds, setBirds] = useState(initialBirdPositions);
   const [movingBird, setMovingBird] = useState(null);
   const [flapFrame, setFlapFrame] = useState(0);
@@ -164,7 +139,8 @@ export default function Grid({ activeSeason, onBirdMove }) {
       fromLabel: from,
       toLabel: to,
       fromPos: start,
-      toPos: end
+      toPos: end,
+      nodeColor: getNodeColor(to)
     });
 
     setMovingBird(null);
@@ -175,7 +151,6 @@ export default function Grid({ activeSeason, onBirdMove }) {
   // ===============================
   const releaseBird = async (houseLabel) => {
     if (!activeSeason || movingBird) return;
-
     const path = seasonalPaths[activeSeason]?.[houseLabel];
     if (!path) return;
 
@@ -192,62 +167,34 @@ export default function Grid({ activeSeason, onBirdMove }) {
       {/* POLYGONS & DIAGONALS */}
       <polygon
         points={`${nodes.A1.x},${nodes.A1.y} ${nodes.E1.x},${nodes.E1.y} ${nodes.E7.x},${nodes.E7.y} ${nodes.A7.x},${nodes.A7.y}`}
-        fill="none"
-        stroke="blue"
-        strokeWidth="2"
-        opacity="0.6"
+        fill="none" stroke="blue" strokeWidth="2" opacity="0.6"
       />
       <polygon
         points={`${nodes.A2.x},${nodes.A2.y} ${nodes.E2.x},${nodes.E2.y} ${nodes.E6.x},${nodes.E6.y} ${nodes.A6.x},${nodes.A6.y}`}
-        fill="none"
-        stroke="orange"
-        strokeWidth="2"
-        opacity="0.6"
+        fill="none" stroke="orange" strokeWidth="2" opacity="0.6"
       />
       <circle
-        cx={center.x}
-        cy={center.y}
-        r={radius}
-        fill="none"
-        stroke="green"
-        strokeWidth="2"
-        opacity="0.6"
+        cx={center.x} cy={center.y} r={radius} fill="none" stroke="green" strokeWidth="2" opacity="0.6"
       />
       <line
-        x1={diag1[0].x}
-        y1={diag1[0].y}
-        x2={diag1[1].x}
-        y2={diag1[1].y}
-        stroke="purple"
-        strokeWidth="2"
-        opacity="0.5"
+        x1={diag1[0].x} y1={diag1[0].y} x2={diag1[1].x} y2={diag1[1].y} stroke="purple" strokeWidth="2" opacity="0.5"
       />
       <line
-        x1={diag2[0].x}
-        y1={diag2[0].y}
-        x2={diag2[1].x}
-        y2={diag2[1].y}
-        stroke="purple"
-        strokeWidth="2"
-        opacity="0.5"
+        x1={diag2[0].x} y1={diag2[0].y} x2={diag2[1].x} y2={diag2[1].y} stroke="purple" strokeWidth="2" opacity="0.5"
       />
 
-      {/* NODES (INVISIBLE: W/X/Y/Z + 8/9) */}
+      {/* NODES */}
       {Object.entries(nodes).map(([l, p]) => {
         if (isInvisibleNode(l)) return null;
 
+        // Check if bird is currently here
+        const birdHere = Object.entries(birds).find(([b, pos]) => pos.x === p.x && pos.y === p.y);
+        const fillColor = birdHere ? resistanceMap?.[birdHere[0]] || getNodeColor(l) : getNodeColor(l);
+
         return (
           <g key={l} style={{ pointerEvents: "none" }}>
-            <circle
-              cx={p.x}
-              cy={p.y}
-              r={4}
-              fill={getNodeColor(l)}
-              stroke="black"
-            />
-            <text x={p.x + 8} y={p.y - 6} fontSize="12">
-              {l}
-            </text>
+            <circle cx={p.x} cy={p.y} r={4} fill={fillColor} stroke="black" />
+            <text x={p.x + 8} y={p.y - 6} fontSize="12">{l}</text>
           </g>
         );
       })}
@@ -256,9 +203,7 @@ export default function Grid({ activeSeason, onBirdMove }) {
       {Object.entries(alpha).map(([l, p]) => (
         <g key={l} style={{ pointerEvents: "none" }}>
           <circle cx={p.x} cy={p.y} r={3} fill={COLOR_DEEP_GREEN} stroke="black" />
-          <text x={p.x + 6} y={p.y - 6} fontSize="12">
-            {l}
-          </text>
+          <text x={p.x + 6} y={p.y - 6} fontSize="12">{l}</text>
         </g>
       ))}
 
@@ -266,23 +211,13 @@ export default function Grid({ activeSeason, onBirdMove }) {
       {Object.entries(birds).map(([l, p]) => {
         const BIRD_SIZE = 100;
         const HALF = BIRD_SIZE / 2;
-
         const isFlapping = movingBird === l;
         const birdImg = isFlapping
-          ? flapFrame === 0
-            ? "/birds/bird-flap1.png"
-            : "/birds/bird-flap2.png"
+          ? flapFrame === 0 ? "/birds/bird-flap1.png" : "/birds/bird-flap2.png"
           : "/birds/bird-normal.png";
 
         return (
-          <image
-            key={l}
-            href={birdImg}
-            x={p.x - HALF}
-            y={p.y - HALF}
-            width={BIRD_SIZE}
-            height={BIRD_SIZE}
-          />
+          <image key={l} href={birdImg} x={p.x - HALF} y={p.y - HALF} width={BIRD_SIZE} height={BIRD_SIZE} />
         );
       })}
 
@@ -293,10 +228,7 @@ export default function Grid({ activeSeason, onBirdMove }) {
           <image
             key={`house-${l}`}
             href="/birds/bird-house.png"
-            x={p.x - 35}
-            y={p.y - 35}
-            width={70}
-            height={70}
+            x={p.x - 35} y={p.y - 35} width={70} height={70}
             style={{ cursor: "pointer" }}
             onClick={() => releaseBird(l)}
           />

@@ -10,53 +10,51 @@ import Quiz from "./components/Quiz";
 import QuickControls from "./components/QuickControls";
 import "./index.scss";
 
-const birdLabels = ["A1","C1","E1","A4","C4","E4","E7","C7","A7"];
+// Birds
+const birdLabels = ["W1","W2","W3","W4","W5","W6","W7","W8","W9"];
 
-const birdTemperatureTable = {
-  A1: [
-    { from: "A1", to: "A2", ambient: 40.3, internal: 40.3, resistance: 5238 },
-    { from: "A2", to: "alpha2", ambient: 30, internal: 40.3, resistance: 5238 }
-  ],
-  C1: [
-    { from: "C1", to: "C2", ambient: 40.3, internal: 40.3, resistance: 5238 }
-  ],
-  E1: [
-    { from: "E1", to: "E2", ambient: 40.3, internal: 40.3, resistance: 5238 },
-    { from: "E2", to: "alpha3", ambient: 30, internal: 40.3, resistance: 5238 }
-  ],
-  A4: [{ from: "A4", to: "A4", ambient: 40, internal: 40.3, resistance: 5238 }],
-  C4: [{ from: "C4", to: "C4", ambient: 40, internal: 40.3, resistance: 5238 }],
-  E4: [{ from: "E4", to: "E4", ambient: 40, internal: 40.3, resistance: 5238 }],
-  E7: [
-    { from: "E7", to: "E6", ambient: 40.3, internal: 40.3, resistance: 5238 },
-    { from: "E6", to: "alpha4", ambient: 30, internal: 40.3, resistance: 5238 }
-  ],
-  C7: [
-    { from: "C7", to: "C6", ambient: 40.3, internal: 40.3, resistance: 5238 }
-  ],
-  A7: [
-    { from: "A7", to: "A6", ambient: 40.3, internal: 40.3, resistance: 5238 },
-    { from: "A6", to: "alpha1", ambient: 30, internal: 40.3, resistance: 5238 }
-  ]
+// Metrics for birds by season
+const birdMetrics = {
+  W1: { 1: { internal: 40.3, ambient: 30, resistance: 8037.15 },
+        2: { internal: 30.3, ambient: 35.3, resistance: 6424.93 },
+        3: { internal: 40.3, ambient: 40, resistance: 5237.85 } },
+  W2: { 1: { internal: 40.3, ambient: 30, resistance: 8037.15 },
+        2: { internal: 30, ambient: 35.3, resistance: 6424.93 },
+        3: { internal: 40.3, ambient: 40, resistance: 5237.85 } },
+  W3: { 1: { internal: 40.3, ambient: 30, resistance: 8037.15 },
+        2: { internal: 30, ambient: 35.3, resistance: 6424.93 },
+        3: { internal: 40.3, ambient: 40, resistance: 5237.85 } },
+  W4: { 1: { internal: 40.3, ambient: 30, resistance: 8037.15 },
+        2: { internal: 30, ambient: 35.3, resistance: 6424.93 },
+        3: { internal: 40.3, ambient: 40, resistance: 5237.85 } },
+  W5: { 1: { internal: 40.3, ambient: 30, resistance: 8037.15 },
+        2: { internal: 35.3, ambient: 35.3, resistance: 6424.93 },
+        3: { internal: 40.3, ambient: 40, resistance: 5237.85 } },
+  W6: { 1: { internal: 40.3, ambient: 30, resistance: 8037.15 },
+        2: { internal: 35.3, ambient: 30, resistance: 80.37 },
+        3: { internal: 40.3, ambient: 40, resistance: 5237.85 } },
+  W7: { 1: { internal: 40.3, ambient: 30, resistance: 8037.15 },
+        2: { internal: 35.3, ambient: 30, resistance: 80.37 },
+        3: { internal: 40.3, ambient: 40, resistance: 5237.85 } },
+  W8: { 1: { internal: 40.3, ambient: 30, resistance: 8037.15 },
+        2: { internal: 35.3, ambient: 30, resistance: 80.37 },
+        3: { internal: 40.3, ambient: 40, resistance: 5237.85 } },
+  W9: { 1: { internal: 40.3, ambient: 35.3, resistance: 6424.93 },
+        2: { internal: 35.3, ambient: 30, resistance: 80.37 },
+        3: { internal: 40.3, ambient: 40, resistance: 5237.85 } },
 };
 
 export default function App() {
   const [activeSeason, setActiveSeason] = useState(null);
-
   const [ambientTemp, setAmbientTemp] = useState(null);
-  const [resistance, setResistance] = useState(null);
-  const [resistanceColor, setResistanceColor] = useState("#9AD3A6");
-
+  const [resistanceMap, setResistanceMap] = useState({});
+  const [nodeColor, setNodeColor] = useState(null); // ✅ added
   const [modal, setModal] = useState({ open: false, title: "", content: "" });
-
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingSeason, setPendingSeason] = useState(null);
 
   const [clockState, setClockState] = useState({
-    birds: Array(9).fill().map(() => ({
-      internalTemperature: null,
-      internalResistance: null
-    })),
+    birds: Array(9).fill().map(() => ({ internalTemperature: null, internalResistance: null })),
     timeIndex: 0,
     event: null
   });
@@ -70,26 +68,55 @@ export default function App() {
       setConfirmOpen(true);
     } else {
       setActiveSeason(season);
+      resetBirds();
     }
+  };
+
+  const resetBirds = () => {
+    setClockState({
+      birds: Array(9).fill().map(() => ({ internalTemperature: null, internalResistance: null })),
+      timeIndex: 0,
+      event: null
+    });
+    setAmbientTemp(null);
+    setResistanceMap({});
+    setNodeColor(null); // ✅ reset colour
   };
 
   const confirmSeasonChange = () => {
     setActiveSeason(pendingSeason);
     setPendingSeason(null);
     setConfirmOpen(false);
+    resetBirds();
+  };
 
-    // RESET birds & readings
-    setClockState({
-      birds: Array(9).fill().map(() => ({
-        internalTemperature: null,
-        internalResistance: null
-      })),
-      timeIndex: 0,
-      event: null
+  // ─────────────────────────────
+  // Handle bird movement
+  // ─────────────────────────────
+  const handleBirdMove = (move) => {
+    const birdIndex = birdLabels.indexOf(move.bird);
+    if (birdIndex === -1) return;
+
+    const seasonNum = activeSeason?.replace("season", "");
+    const metrics =
+      birdMetrics[move.bird]?.[seasonNum] || {
+        internal: null,
+        ambient: null,
+        resistance: null
+      };
+
+    setClockState(prev => {
+      const birds = [...prev.birds];
+      birds[birdIndex] = {
+        internalTemperature: metrics.internal,
+        internalResistance: metrics.resistance
+      };
+      return { ...prev, birds, timeIndex: birdIndex, event: move };
     });
 
-    setAmbientTemp(null);
-    setResistance(null);
+    setAmbientTemp(metrics.ambient);
+    setResistanceMap(prev => ({ ...prev, [move.bird]: metrics.resistance }));
+    setNodeColor(move.nodeColor); // ✅ landed node colour
   };
 
   return (
@@ -111,59 +138,30 @@ export default function App() {
 
         <div className="center">
           <Grid
-            key={activeSeason}   // forces reset on season change
+            key={activeSeason}
             activeSeason={activeSeason}
-            onBirdMove={(move) => {
-              const birdIndex = birdLabels.indexOf(move.bird);
-              if (birdIndex === -1) return;
-
-              const steps = birdTemperatureTable[move.bird];
-              const step =
-                steps.find(
-                  s =>
-                    s.from === move.fromLabel &&
-                    s.to === move.toLabel
-                ) || steps[0];
-
-              setClockState(prev => {
-                const birds = [...prev.birds];
-                birds[birdIndex] = {
-                  internalTemperature: step.internal,
-                  internalResistance: step.resistance
-                };
-                return {
-                  ...prev,
-                  birds,
-                  timeIndex: birdIndex,
-                  event: move
-                };
-              });
-
-              setAmbientTemp(step.ambient);
-              setResistance(step.resistance);
-            }}
-            onNodeColorChange={setResistanceColor}
+            onBirdMove={handleBirdMove}
+            resistanceMap={resistanceMap}
           />
         </div>
 
         <div className="right">
-          <ResistanceReadings value={resistance} color={resistanceColor} />
+          <ResistanceReadings
+            value={clockState.birds[clockState.timeIndex]?.internalResistance}
+            color={nodeColor}
+          />
           <Clock clockState={clockState} />
           <TemperatureReadings value={ambientTemp} />
         </div>
       </div>
 
-      {/* Existing informational modal */}
       <Modal
         isOpen={modal.open}
         title={modal.title}
         content={modal.content}
-        onClose={() =>
-          setModal({ open: false, title: "", content: "" })
-        }
+        onClose={() => setModal({ open: false, title: "", content: "" })}
       />
 
-      {/* Quick confirm modal */}
       <QuickModal
         open={confirmOpen}
         title="Change Season?"
