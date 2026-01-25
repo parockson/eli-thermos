@@ -109,7 +109,7 @@ export default function Clock({ clockState, size = 200 }) {
           
         }}
       >
-        <p style={{ margin: 0, fontSize: "10px", fontWeight: "bold" }}>Top Reading: internal temperature</p>
+        <p style={{ margin: 0, fontSize: "10px", fontWeight: "bold" }}>Top Reading: Core body temperature</p>
         <p style={{ margin: 0, fontSize: "10px", fontWeight: "bold" }}>Bottom Reading: Resistance</p>
       </div>
     </div>

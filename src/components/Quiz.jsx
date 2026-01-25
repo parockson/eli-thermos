@@ -1,19 +1,33 @@
 import React, { useState } from "react";
 import {
-  ScatterChart,
-  Scatter,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   Legend,
   ResponsiveContainer,
-  Line,
 } from "recharts";
 
 export default function Quiz() {
   const [name, setName] = useState("");
-  const [data, setData] = useState([{ ambient: "", core: "", pattern: "Circle" }]);
+
+  // Seasons
+  const seasons = ["Winter", "Monsoon", "Summer"];
+
+  // Fixed 27 data points (9 birds × 3 seasons)
+  const initialData = Array.from({ length: 9 }, (_, birdIdx) =>
+    seasons.map(season => ({
+      bird: birdIdx + 1,
+      season,
+      ambient: "",
+      core: "",
+    }))
+  ).flat();
+
+  const [data, setData] = useState(initialData);
+
   const [reflections, setReflections] = useState({
     q1: "",
     q2: "",
@@ -22,228 +36,216 @@ export default function Quiz() {
     q5: "",
     q6: "",
     q7: "",
+    q8a: "",
+    q8b: "",
   });
+
   const [submitted, setSubmitted] = useState(false);
   const [sessionId] = useState("S" + Date.now().toString().slice(-6));
+  const [maximized, setMaximized] = useState(false);
 
-  const handleEdit = (index, field, value) => {
+  // Update ambient/core values
+  const handleEdit = (season, bird, field, value) => {
     setData(prev =>
-      prev.map((row, i) =>
-        i === index
-          ? { ...row, [field]: field === "ambient" || field === "core" ? parseFloat(value) || "" : value }
-          : row
+      prev.map(d =>
+        d.season === season && d.bird === bird
+          ? { ...d, [field]: parseFloat(value) || "" }
+          : d
       )
     );
   };
-
-  const addRow = () => setData(prev => [...prev, { ambient: "", core: "", pattern: "Circle" }]);
-  const deleteRow = index => setData(prev => prev.filter((_, i) => i !== index));
 
   const handleReflectionChange = (key, value) => {
     setReflections(prev => ({ ...prev, [key]: value }));
   };
 
-  const circle = data.filter(d => d.pattern === "Circle");
-  const square = data.filter(d => d.pattern === "Square");
-  const rectangle = data.filter(d => d.pattern === "Rectangle");
+  // Filter data per season
+  const seasonData = season => data.filter(d => d.season === season);
 
   return (
     <div
       style={{
         fontFamily: "Arial, sans-serif",
-        maxWidth: "900px",
-        margin: "0 auto",
+        maxWidth: maximized ? "100%" : "900px",
+        height: maximized ? "100vh" : "auto",
+        overflowY: maximized ? "auto" : "visible",
+        margin: maximized ? "0" : "0 auto",
         background: "#fdfdfd",
         padding: "2rem",
+        position: maximized ? "fixed" : "relative",
+        top: 0,
+        left: 0,
+        zIndex: maximized ? 9999 : "auto",
       }}
     >
-      <h1 style={{ textAlign: "center", color: "#2c3e50" }}>Quiz</h1>
+      {/* Header */}
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <h1>Quiz</h1>
+        <button
+          onClick={() => setMaximized(m => !m)}
+          style={{
+            background: "#2c3e50",
+            color: "white",
+            border: "none",
+            padding: "6px 12px",
+            borderRadius: "4px",
+            cursor: "pointer",
+            height: "40px",
+          }}
+        >
+          {maximized ? "🗗 Restore" : "🗖 Maximize"}
+        </button>
+      </div>
+
       <p style={{ textAlign: "center", color: "gray" }}>
         Session ID: <strong>{sessionId}</strong>
       </p>
 
       {/* Student Name */}
       <div style={{ marginBottom: "1rem" }}>
-        <label style={{ fontWeight: "bold" }}>Student Name:</label>
+        <label><strong>Student Name:</strong></label>
         <input
           value={name}
           onChange={e => setName(e.target.value)}
-          placeholder="Enter your name"
-          style={{
-            width: "100%",
-            padding: "8px",
-            marginTop: "4px",
-            borderRadius: "4px",
-            border: "1px solid #ccc",
-          }}
+          style={{ width: "100%", padding: "8px" }}
           disabled={submitted}
         />
       </div>
 
-      {/* Questions */}
+      {/* Question 1 */}
       <div style={{ marginBottom: "1rem" }}>
-        <label style={{ fontWeight: "bold", display: "block", marginBottom: "4px" }}>
+        <label>
           1. Observe the birds’ movement for each season and complete the IF–THEN rules:
         </label>
-        {["Harmattan", "Rainy", "Dry"].map((season, i) => (
-          <div key={i} style={{ marginBottom: "6px" }}>
-            IF season = <input type="text" placeholder={season} style={{ width: "150px" }} /> THEN birds converge at{" "}
-            <input type="text" placeholder="Pattern" style={{ width: "120px" }} /> shape.
+        {seasons.map((season, i) => (
+          <div key={i}>
+            IF season =
+            <input style={{ width: "150px" }} placeholder={season} /> THEN birds
+            converge at <input style={{ width: "120px" }} placeholder="Pattern" /> shape.
           </div>
         ))}
       </div>
 
-      <div style={{ marginBottom: "1rem" }}>
-        <label style={{ fontWeight: "bold", display: "block", marginBottom: "4px" }}>
-          2. Record ambient temperature and core body temperature.
-        </label>
-        <table
-          style={{
-            width: "100%",
-            borderCollapse: "collapse",
-            marginBottom: "1rem",
-          }}
-        >
-          <thead>
-            <tr style={{ background: "#e3f2fd" }}>
-              <th>#</th>
-              <th>Ambient Temp (°C)</th>
-              <th>Core Temp (°C)</th>
-              <th>Convergence Pattern</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((row, i) => (
-              <tr key={i}>
-                <td style={{ border: "1px solid #ccc", textAlign: "center" }}>{i + 1}</td>
-                <td style={{ border: "1px solid #ccc" }}>
-                  <input
-                    type="number"
-                    value={row.ambient}
-                    onChange={e => handleEdit(i, "ambient", e.target.value)}
-                    style={{ width: "100%", padding: "4px", border: "none", textAlign: "center" }}
-                    disabled={submitted}
-                  />
-                </td>
-                <td style={{ border: "1px solid #ccc" }}>
-                  <input
-                    type="number"
-                    value={row.core}
-                    onChange={e => handleEdit(i, "core", e.target.value)}
-                    style={{ width: "100%", padding: "4px", border: "none", textAlign: "center" }}
-                    disabled={submitted}
-                  />
-                </td>
-                <td style={{ border: "1px solid #ccc" }}>
-                  <select
-                    value={row.pattern}
-                    onChange={e => handleEdit(i, "pattern", e.target.value)}
-                    style={{ width: "100%", padding: "4px", border: "none" }}
-                    disabled={submitted}
-                  >
-                    <option>Circle</option>
-                    <option>Square</option>
-                    <option>Rectangle</option>
-                  </select>
-                </td>
-                <td style={{ border: "1px solid #ccc", textAlign: "center" }}>
-                  {!submitted && (
-                    <button
-                      onClick={() => deleteRow(i)}
-                      style={{ background: "#e53935", color: "white", border: "none", padding: "4px 8px", cursor: "pointer" }}
-                    >
-                      ✕
-                    </button>
-                  )}
-                </td>
+      {/* Tables & Graphs for each season */}
+      {seasons.map(season => (
+        
+        <div key={season} style={{ marginBottom: "3rem" }}>
+          <p> For this {season} season and corresponding convergence pattern, record the ambient temperature and the core body temperature of the birds. </p>
+          <h2>{season} Season</h2>
+
+          {/* Table */}
+          <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "1rem" }}>
+            <thead>
+              <tr style={{ background: "#e3f2fd" }}>
+                <th>Bird</th>
+                <th>Ambient Temp (°C)</th>
+                <th>Core Body Temp (°C)</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        {!submitted && (
-          <button
-            onClick={addRow}
-            style={{
-              background: "#1976d2",
-              color: "white",
-              border: "none",
-              padding: "6px 12px",
-              cursor: "pointer",
-              borderRadius: "4px",
-              marginBottom: "1rem",
-            }}
-          >
-            ➕ Add Row
-          </button>
-        )}
-      </div>
+            </thead>
+            <tbody>
+              {seasonData(season).map(row => (
+                <tr key={row.bird}>
+                  <td style={{ border: "1px solid #ccc", textAlign: "center" }}>{row.bird}</td>
+                  <td style={{ border: "1px solid #ccc" }}>
+                    <input
+                      type="number"
+                      value={row.ambient}
+                      onChange={e =>
+                        handleEdit(season, row.bird, "ambient", e.target.value)
+                      }
+                      style={{ width: "100%", border: "none", textAlign: "center" }}
+                      disabled={submitted}
+                    />
+                  </td>
+                  <td style={{ border: "1px solid #ccc" }}>
+                    <input
+                      type="number"
+                      value={row.core}
+                      onChange={e =>
+                        handleEdit(season, row.bird, "core", e.target.value)
+                      }
+                      style={{ width: "100%", border: "none", textAlign: "center" }}
+                      disabled={submitted}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
-      {/* Graph */}
-      <ResponsiveContainer width="100%" height={320}>
-        <ScatterChart margin={{ top: 20, right: 40, bottom: 20, left: 40 }}>
-          <CartesianGrid />
-          <XAxis type="number" dataKey="ambient" label={{ value: "Ambient Temp (°C)", position: "bottom" }} />
-          <YAxis type="number" dataKey="core" label={{ value: "Core Temp (°C)", angle: -90, position: "insideLeft" }} />
-          <Tooltip cursor={{ strokeDasharray: "3 3" }} />
-          <Legend verticalAlign="top" align="center" />
-          <Scatter name="Circle" data={circle} fill="#1e88e5" />
-          <Scatter name="Square" data={square} fill="#e91e63" />
-          <Scatter name="Rectangle" data={rectangle} fill="#43a047" />
-        </ScatterChart>
-      </ResponsiveContainer>
+          {/* Graph */}
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={seasonData(season)}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis
+                dataKey="bird"
+                label={{ value: "Bird Number", position: "insideBottom", offset: -5 }}
+                type="number"
+              />
+              <YAxis label={{ value: "Temperature (°C)", angle: -90, position: "insideLeft" }} />
+              <Tooltip />
+              <Legend verticalAlign="top" />
+              <Line
+                type="monotone"
+                dataKey="ambient"
+                stroke="#1e88e5"
+                strokeWidth={2}
+                dot={{ r: 4 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="core"
+                stroke="#e53935"
+                strokeWidth={2}
+                dot={{ r: 4 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      ))}
 
-      {/* Remaining Questions */}
-      {["q3","q4","q5","q6","q7"].map((q, idx) => (
-        <div key={q} style={{ marginBottom: "1rem" }}>
-          <label style={{ fontWeight: "bold", display: "block", marginBottom: "4px" }}>
-            {idx + 3}. Question {idx + 3} text here
-          </label>
+      {/* Questions 3–8 */}
+      {[
+        ["q3", "3. Using the rules you identified and the temperature data you collected, predict how the birds would behave under a new or untested environmental condition (for example, extreme cold or unusually high heat). Explain how this prediction tests or validates the rule-based model used in the simulation."],
+        ["q4", "4. Explain how core body temperature is measured in this simulation. Clearly distinguish between ambient temperature and core body temperature."],
+        ["q5", "5. Identify and explain three artificial intelligence concepts demonstrated by the birds’ movement in the simulation."],
+        ["q6", "6. Some communities interpret bird convergence patterns as environmental indicators (for example, circular convergence indicating rainfall and rectangular convergence indicating heat). Using scientific terminology, explain the constraint satisfaction behavior exhibited by the birds in each season. For each convergence pattern (circle, square, rectangle), describe how ambient temperature and core body temperature influence the birds’ choice of location."],
+        ["q7", "7. Birds show different convergence patterns such as circles, squares, and rectangles. Using one convergence pattern as an example, explain how this behavior can be interpreted from a community perspective, a scientific perspective, and an artificial intelligence perspective. Then show how the community observation can be translated into a scientific explanation and formalized as an AI rule."],
+      ].map(([key, text]) => (
+        <div key={key} style={{ marginBottom: "1rem" }}>
+          <label>{text}</label>
           <textarea
-            value={reflections[q]}
-            onChange={e => handleReflectionChange(q, e.target.value)}
-            style={{ width: "100%", padding: "10px", minHeight: "80px", marginBottom: "8px" }}
+            value={reflections[key]}
+            onChange={e => handleReflectionChange(key, e.target.value)}
+            style={{ width: "100%", minHeight: "120px" }}
             disabled={submitted}
           />
         </div>
       ))}
 
-      {/* Print Button */}
-      <div style={{ textAlign: "center", marginTop: "2rem" }}>
-        <button
-          onClick={() => window.print()}
-          style={{
-            backgroundColor: "#d84315",
-            color: "white",
-            border: "none",
-            padding: "10px 16px",
-            cursor: "pointer",
-            fontSize: "1rem",
-            borderRadius: "4px",
-          }}
-        >
-          🖨️ Print Quiz (All Pages)
-        </button>
+      {/* Question 8 */}
+      <div style={{ marginBottom: "1rem" }}>
+        <label>8. Some of the birds are known to be swiftlets that produce edible bird’s nests. Based on this information, answer the following questions:</label>
+        <p>(a) During which season are edible bird’s nests graded as having the highest protein composition?</p>
+        <textarea
+          value={reflections.q8a}
+          onChange={e => handleReflectionChange("q8a", e.target.value)}
+          style={{ width: "100%" }}
+          disabled={submitted}
+        />
+        <p>(b) Name one health condition that edible bird’s nests are scientifically proven to treat..</p>
+        <textarea
+          value={reflections.q8b}
+          onChange={e => handleReflectionChange("q8b", e.target.value)}
+          style={{ width: "100%" }}
+          disabled={submitted}
+        />
       </div>
 
-      {/* Print Styles */}
-      <style>{`
-        @media print {
-          body {
-            margin: 0;
-            -webkit-print-color-adjust: exact;
-          }
-          input, textarea, select {
-            font-size: 14px;
-            height: auto !important;
-            border: 1px solid #ccc !important;
-            background: white !important;
-          }
-          button { display: none; }
-          table { page-break-inside: auto; }
-          div { page-break-inside: avoid; }
-        }
-      `}</style>
+      {/* Print */}
+      <div style={{ textAlign: "center", marginTop: "2rem" }}>
+        <button onClick={() => window.print()}>🖨️ Print Quiz</button>
+      </div>
     </div>
   );
 }

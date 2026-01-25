@@ -19,7 +19,7 @@ export default function Taskbar({ setModal, automateRef }) {
           Reset
         </button>
 
-        <button
+        {/* <button
           onClick={() =>
             window.open(
               "https://thermoregulation.netlify.app/",
@@ -29,65 +29,25 @@ export default function Taskbar({ setModal, automateRef }) {
           }
         >
           Quiz
-        </button>
+        </button> */}
 
-        <button
-          onClick={() =>
-            setModal({
-              open: true,
-              title: "Node Coordinates",
-              content: (
-                <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                    <thead>
-                      <tr style={{ borderBottom: '2px solid #ccc' }}>
-                        <th style={{ padding: '8px' }}>Node</th>
-                        <th style={{ padding: '8px' }}>X</th>
-                        <th style={{ padding: '8px' }}>Y</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {/* Alpha Points */}
-                      <tr style={{ backgroundColor: '#f0f0f0', fontWeight: 'bold' }}><td colSpan="3" style={{ padding: '8px' }}>Alpha Boundary Points</td></tr>
-                      <tr><td style={{ padding: '8px' }}>alpha1</td><td style={{ padding: '8px' }}>110</td><td style={{ padding: '8px' }}>380</td></tr>
-                      <tr><td style={{ padding: '8px' }}>alpha2</td><td style={{ padding: '8px' }}>110</td><td style={{ padding: '8px' }}>180</td></tr>
-                      <tr><td style={{ padding: '8px' }}>alpha3</td><td style={{ padding: '8px' }}>310</td><td style={{ padding: '8px' }}>180</td></tr>
-                      <tr><td style={{ padding: '8px' }}>alpha4</td><td style={{ padding: '8px' }}>310</td><td style={{ padding: '8px' }}>380</td></tr>
-
-                      {/* Grid Nodes */}
-                      <tr style={{ backgroundColor: '#f0f0f0', fontWeight: 'bold' }}><td colSpan="3" style={{ padding: '8px' }}>Grid Nodes</td></tr>
-                      {['A', 'B', 'C', 'D', 'E'].map(col =>
-                        [1, 2, 3, 4, 5, 6, 7].map(row => (
-                          <tr key={`${col}${row}`} style={{ borderBottom: '1px solid #eee' }}>
-                            <td style={{ padding: '8px' }}>{col}{row}</td>
-                            <td style={{ padding: '8px' }}>{(['A', 'B', 'C', 'D', 'E'].indexOf(col) + 1) * 70}</td>
-                            <td style={{ padding: '8px' }}>{row * 70}</td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              )
-            })
-          }
-        >
-          Points
-        </button>
+        
 
         <button
           onClick={() =>
             setModal({
               open: true,
               title: "Info",
-              content: `Every day, our bodies are quietly responding to the temperature around us...`
+              content: `Every day, our bodies are quietly responding to the temperature around us. This response is shaped by the relationship between our internal body temperature and the temperature of the external environment. Sometimes, this balance allows us to move through the day comfortably without even noticing the weather. Other times, it pushes us to reach for a jacket, turn on a heater, or switch on the air conditioner to cool down. These everyday choices are not random. They are driven by a powerful scientific process happening inside us. But have you ever stopped to wonder how your body knows when it is too hot or too cold? What mechanisms help keep your internal temperature just right as the environment changes? Even more intriguing, do other living things, such as birds, rely on similar processes to survive shifting temperatures? If they do, what serves as their source of heat or cooling?
+
+ELI is a biomimicry-based interactive learning environment designed to help you explore these questions. Through seven engaging lessons, you will build an understanding of how living organisms regulate their internal body temperature in relation to their environment and how nature’s solutions can inspire scientific thinking. Step inside ELI and uncover the fascinating science of thermoregulation all around you and within you.`
             })
           }
         >
           Info
         </button>
 
-        <button
+        {/* <button
           onClick={() =>
             setModal({
               open: true,
@@ -97,10 +57,10 @@ export default function Taskbar({ setModal, automateRef }) {
           }
         >
           Automate
-        </button>
+        </button> */}
 
         {/* Quick Controls Dropdown */}
-        <div style={{ position: 'relative', display: 'inline-block' }}>
+        {/* <div style={{ position: 'relative', display: 'inline-block' }}>
           <button
             onClick={() => setShowQuickDropdown(prev => !prev)}
           >
@@ -127,7 +87,7 @@ export default function Taskbar({ setModal, automateRef }) {
               <QuickControls automateRef={automateRef} />
             </div>
           )}
-        </div>
+        </div> */}
 
       </div>
     </div>

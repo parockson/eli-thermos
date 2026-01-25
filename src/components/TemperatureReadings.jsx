@@ -24,11 +24,11 @@ export default function TemperatureReadings({ value }) {
         flexDirection: "column",
         alignItems: "center",
         padding: "0px",
-        backgroundColor: "blue",
+        backgroundColor: "#fff",
         fontSize: "14px",
       }}
     >
-      <h5>Amb Temp</h5>
+      <h5>Ambient Temperature</h5>
 
       {/* Thermometer */}
       <div
