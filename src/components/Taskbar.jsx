@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import "../styles/Taskbar.scss";
-import QuickControls from "./QuickControls";
+// import QuickControls from "./QuickControls";
 
 export default function Taskbar({ setModal, automateRef }) {
   const [showQuickDropdown, setShowQuickDropdown] = useState(false);
@@ -19,19 +19,9 @@ export default function Taskbar({ setModal, automateRef }) {
           Reset
         </button>
 
-        {/* <button
-          onClick={() =>
-            window.open(
-              "https://thermoregulation.netlify.app/",
-              "_blank",
-              "noopener,noreferrer"
-            )
-          }
-        >
-          Quiz
-        </button> */}
 
-        g
+
+
 
         <button
           onClick={() =>
@@ -47,47 +37,7 @@ ELI is a biomimicry-based interactive learning environment designed to help you 
           Info
         </button>
 
-        {/* <button
-          onClick={() =>
-            setModal({
-              open: true,
-              title: "Automation",
-              content: "Automation feature coming soon."
-            })
-          }
-        >
-          Automate
-        </button> */}
 
-        {/* Quick Controls Dropdown */}
-        {/* <div style={{ position: 'relative', display: 'inline-block' }}>
-          <button
-            onClick={() => setShowQuickDropdown(prev => !prev)}
-          >
-            Quick Controls
-          </button>
-
-          {showQuickDropdown && (
-            <div
-              ref={dropdownRef}
-              style={{
-                position: "absolute",
-                top: "100%",
-                left: 0,
-                background: "#fff",
-                border: "1px solid #ccc",
-                borderRadius: "6px",
-                padding: "8px",
-                marginTop: "4px",
-                zIndex: 1000,
-                minWidth: "180px",
-                boxShadow: "0 2px 6px rgba(0,0,0,0.15)"
-              }}
-            >
-              <QuickControls automateRef={automateRef} />
-            </div>
-          )}
-        </div> */}
 
       </div>
     </div>
