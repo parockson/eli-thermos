@@ -128,7 +128,7 @@ export default function Quiz() {
 
       {/* Tables & Graphs for each season */}
       {seasons.map(season => (
-        
+
         <div key={season} style={{ marginBottom: "3rem" }}>
           <p> For this {season} season and corresponding convergence pattern, record the ambient temperature and the core body temperature of the birds. </p>
           <h2>{season} Season</h2>
@@ -178,10 +178,17 @@ export default function Quiz() {
             <LineChart data={seasonData(season)}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
-                dataKey="bird"
-                label={{ value: "Bird Number", position: "insideBottom", offset: -5 }}
                 type="number"
+                dataKey="bird"
+                domain={[1, 9]}
+                ticks={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
+                label={{
+                  value: "Bird Number",
+                  position: "insideBottom",
+                  offset: -5,
+                }}
               />
+
               <YAxis label={{ value: "Temperature (°C)", angle: -90, position: "insideLeft" }} />
               <Tooltip />
               <Legend verticalAlign="top" />
